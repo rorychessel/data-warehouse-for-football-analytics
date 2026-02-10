@@ -1,0 +1,47 @@
+\babel@toc {english}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Báo cáo tiến độ đồ án}}{}{figure.caption.1}%
+\addvspace {10\p@ }
+\contentsline {xchapter}{Cơ sở lý thuyết}{3}{chapter.1}%
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Khối OLAP}}{10}{figure.caption.16}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Các phép toán trên khối OLAP}}{12}{figure.caption.19}%
+\addvspace {10\p@ }
+\contentsline {xchapter}{Khảo sát hệ thống}{15}{chapter.2}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Mindmap nhu cầu phân tích}}{19}{figure.caption.25}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Luồng nghiệp vụ phân tích đối thủ}}{20}{figure.caption.26}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Luồng nghiệp vụ phân tích hiệu suất đội nhà}}{22}{figure.caption.27}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Luồng nghiệp vụ tuyển trạch cầu thủ}}{24}{figure.caption.28}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Mô hình kinh doanh}}{26}{figure.caption.29}%
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Sơ đồ luồng dữ liệu}}{28}{figure.caption.30}%
+\addvspace {10\p@ }
+\contentsline {xchapter}{Thiết kế hệ thống}{32}{chapter.3}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Tổng quan về cấu trúc các file dữ liệu dạng JSON}}{32}{figure.caption.31}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Chất lượng dữ liệu sự kiện}}{34}{figure.caption.38}%
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Top 10 loại sự kiện phổ biến nhất trong một trận đấu mẫu}}{35}{figure.caption.40}%
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Bản đồ nhiệt (Heatmap) vị trí hoạt động trên sân}}{36}{figure.caption.42}%
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Phân phối tỷ lệ chuyền bóng chính xác của cầu thủ}}{36}{figure.caption.44}%
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Tương quan giữa Bàn thắng kỳ vọng (xG) và Bàn thắng thực tế}}{37}{figure.caption.46}%
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Kiến trúc Data Warehouse}}{37}{figure.caption.47}%
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Đường ống dữ liệu}}{38}{figure.caption.48}%
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Nhóm chiều thời gian}}{40}{figure.caption.49}%
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Nhóm chiều thông tin trận đấu}}{40}{figure.caption.50}%
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Nhóm chiều thông tin đội bóng}}{41}{figure.caption.51}%
+\contentsline {figure}{\numberline {3.12}{\ignorespaces Nhóm chiều thông tin cầu thủ}}{41}{figure.caption.52}%
+\contentsline {figure}{\numberline {3.13}{\ignorespaces Nhóm chiều thông tin sự kiện}}{42}{figure.caption.53}%
+\contentsline {figure}{\numberline {3.14}{\ignorespaces Nhóm chiều tình huống bóng}}{42}{figure.caption.54}%
+\contentsline {figure}{\numberline {3.15}{\ignorespaces Nhóm chiều khu vực sân}}{43}{figure.caption.55}%
+\contentsline {figure}{\numberline {3.16}{\ignorespaces Mô hình dữ liệu logic}}{43}{figure.caption.56}%
+\contentsline {figure}{\numberline {3.17}{\ignorespaces Mô hình dữ liệu vật lý của bảng fact\_event}}{45}{figure.caption.58}%
+\contentsline {figure}{\numberline {3.18}{\ignorespaces Mô hình dữ liệu vật lý của bảng fact\_player\_match\_stats}}{46}{figure.caption.60}%
+\contentsline {figure}{\numberline {3.19}{\ignorespaces Mô hình dữ liệu vật lý của bảng fact\_team\_match\_stats}}{47}{figure.caption.62}%
+\contentsline {figure}{\numberline {3.20}{\ignorespaces Mô hình dữ liệu vật lý của bảng fact\_player\_season\_stats}}{48}{figure.caption.64}%
+\addvspace {10\p@ }
+\contentsline {xchapter}{Cài đặt hệ thống}{49}{chapter.4}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Cấu hình kết nối Apache Spark với MinIO}}{49}{figure.caption.66}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Giao diện của Apache Airflow}}{54}{figure.caption.70}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Luồng thực hiện các task trên Apache Airflow}}{56}{figure.caption.71}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Kết quả thực thi của các task trên Apache Airflow}}{56}{figure.caption.72}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Dashboard phân tích trận đấu}}{57}{figure.caption.73}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Dashboard phân tích cầu thủ theo trận đấu}}{57}{figure.caption.74}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Dashboard phân tích cầu thủ theo mùa giải}}{58}{figure.caption.75}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Dashboard phân tích đội bóng đối thủ}}{58}{figure.caption.76}%
+\contentsfinish 

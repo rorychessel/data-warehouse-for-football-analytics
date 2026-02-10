@@ -1,0 +1,36 @@
+\section{Kiến trúc Data Warehouse}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/ktruc_etl.png}
+	\caption{Kiến trúc Data Warehouse}
+	\label{ktruc_etl}
+\end{figure}
+
+Kiến trúc Data Warehouse được chia làm 4 tầng:
+
+\begin{enumerate}
+	\item \textbf{Nguồn dữ liệu (Data source):}
+	\begin{itemize}
+		\item Dữ liệu từ GitHub của StatsBomb.
+		\item Đây là nguyên liệu thô đầu vào, chứa thông tin đa dạng về trận đấu, cầu thủ và sự kiện kỹ thuật.
+	\end{itemize}
+	
+	\item \textbf{Vùng đệm (Staging/Data Lake):}
+	\begin{itemize}
+		\item Sử dụng \textbf{MinIO} để lưu trữ nguyên bản dữ liệu thô vừa thu thập được.
+		\item Đảm bảo toàn vẹn dữ liệu và phục vụ truy vết hoặc xử lý lại nếu cần.
+	\end{itemize}
+	
+	\item \textbf{Kho dữ liệu (Data Warehouse):}
+	\begin{itemize}
+		\item \textbf{Xử lý:} Sử dụng \textbf{Apache Spark} để đọc dữ liệu từ MinIO, thực hiện làm sạch, chuẩn hóa và làm phẳng cấu trúc JSON lồng nhau.
+		\item \textbf{Lưu trữ:} Dữ liệu sạch được nạp vào \textbf{PostgreSQL} và tổ chức theo mô hình lược đồ sao gồm các bảng Fact và bảng Dimension.
+	\end{itemize}
+	
+	\item \textbf{Phân tích và báo cáo (BI):}
+	\begin{itemize}
+		\item Sử dụng \textbf{Microsoft PowerBI} kết nối trực tiếp với PostgreSQL.
+		\item Cung cấp các dashboard tương tác phục vụ nhu cầu phân tích chiến thuật, hiệu suất cầu thủ và tuyển trạch cho người dùng cuối.
+	\end{itemize}
+\end{enumerate}

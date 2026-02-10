@@ -1,0 +1,174 @@
+\section{Mô hình kinh doanh và Luồng dữ liệu}
+
+\subsection{Mô hình kinh doanh}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.025\linewidth]{pics/canvas.png}
+	\caption{Mô hình kinh doanh}
+	\label{canvas}
+\end{figure}
+
+\begin{enumerate}
+	% 1. Đối tác chính
+	\item \textbf{Đối tác chính (Key Partners):}
+	\begin{itemize}
+		\item \textbf{Nhà cung cấp dữ liệu:} Các đơn vị như StatsBomb cung cấp dữ liệu sự kiện thô, là nguyên liệu đầu vào quan trọng cho hệ thống phân tích.
+		\item \textbf{Nhà tài trợ:} Các thương hiệu đồng hành cung cấp nguồn tài chính.
+		\item \textbf{Liên đoàn/Ban tổ chức giải:} Đơn vị quản lý, tổ chức giải đấu và phân chia bản quyền truyền hình.
+	\end{itemize}
+	
+	% 2. Hoạt động chính
+	\item \textbf{Hoạt động chính (Key Activities):}
+	\begin{itemize}
+		\item \textbf{Tập luyện, thi đấu:} Hoạt động thường nhật.
+		\item \textbf{Tuyển trạch, chuyển nhượng:} Tìm kiếm, sàng lọc và mua bán cầu thủ để nâng cấp đội hình hoặc kiếm lời.
+		\item \textbf{Quản lý sức khỏe, y tế:} Duy trì thể trạng, ngăn ngừa chấn thương.
+		\item \textbf{Thương mại:} Quảng bá, khai thác giá trị thương hiệu.
+	\end{itemize}
+	
+	% 3. Giá trị cung cấp
+	\item \textbf{Giá trị cung cấp (Value Proposition):}
+	\begin{itemize}
+		\item \textbf{Thành tích thi đấu cao:} Chiến thắng và các danh hiệu là sản phẩm cốt lõi thu hút người hâm mộ.
+		\item \textbf{Hoạt động chuyển nhượng thông minh:} Mua cầu thủ tiềm năng với giá rẻ, phát triển họ và bán lại với giá cao.
+		\item \textbf{Thương hiệu mạnh, giải trí:} Cống hiến lối chơi đẹp mắt và trải nghiệm giải trí đỉnh cao.
+		\item \textbf{Đào tạo trẻ chất lượng:} Hệ thống lò đào tạo bài bản cung cấp nguồn nhân lực kế cận.
+	\end{itemize}
+	
+	% 4. Quan hệ khách hàng
+	\item \textbf{Quan hệ khách hàng (Customer Relationships):}
+	\begin{itemize}
+		\item \textbf{Cộng đồng người hâm mộ:} Tương tác liên tục qua các kênh mạng xã hội, hội cổ động viên.
+		\item \textbf{Thành viên thân thiết:} Cung cấp các gói ưu đãi cho cổ động viên trung thành.
+	\end{itemize}
+	
+	% 5. Phân khúc khách hàng
+	\item \textbf{Phân khúc khách hàng (Customer Segments):}
+	\begin{itemize}
+		\item \textbf{Người hâm mộ:} Khán giả đến sân hoặc theo dõi qua truyền hình.
+		\item \textbf{Nhà tài trợ:} Các doanh nghiệp muốn quảng bá thương hiệu gắn liền với hình ảnh đội bóng.
+		\item \textbf{Các đài truyền hình/Đơn vị bản quyền:} Đối tác mua bản quyền phát sóng giải đấu.
+		\item \textbf{Các CLB khác:} Đối tác mua/bán cầu thủ.
+	\end{itemize}
+	
+	% 6. Tài nguyên chính
+	\item \textbf{Tài nguyên chính (Key Resources):}
+	\begin{itemize}
+		\item \textbf{Cầu thủ:} Tài sản giá trị nhất của đội bóng.
+		\item \textbf{Hệ thống dữ liệu, phân tích:} Kho dữ liệu và đội ngũ phân tích.
+		\item \textbf{Sân vận động, cơ sở tập luyện:} Hạ tầng vật chất phục vụ thi đấu.
+		\item \textbf{Thương hiệu, hình ảnh:} Giá trị vô hình giúp thu hút tài trợ.
+	\end{itemize}
+	
+	% 7. Kênh phân phối
+	\item \textbf{Kênh phân phối (Channels):}
+	\begin{itemize}
+		\item \textbf{Sân vận động:} Nơi diễn ra trận đấu.
+		\item \textbf{Truyền thông số:} Website, Ứng dụng, Mạng xã hội của CLB.
+		\item \textbf{Cửa hàng:} Kênh bán vé và vật phẩm lưu niệm.
+	\end{itemize}
+	
+	% 8. Cơ cấu chi phí
+	\item \textbf{Cơ cấu chi phí (Cost Structure):}
+	\begin{itemize}
+		\item \textbf{Lương:} Khoản chi phí vận hành lớn nhất.
+		\item \textbf{Phí chuyển nhượng:} Chi phí khấu hao khi mua cầu thủ.
+		\item \textbf{Chi phí vận hành hệ thống:} Hạ tầng máy chủ, nhân sự phân tích.
+		\item \textbf{Chi phí vận hành sân bãi và học viện đào tạo.}
+	\end{itemize}
+	
+	% 9. Nguồn doanh thu
+	\item \textbf{Nguồn doanh thu (Revenue Streams):}
+	\begin{itemize}
+		\item \textbf{Doanh thu chuyển nhượng:} CLB kiếm lợi nhuận từ việc bán cầu thủ.
+		\item \textbf{Tiền thưởng, tiền bản quyền.}
+		\item \textbf{Doanh thu ngày thi đấu:} Bán vé vào sân xem trận đấu.
+		\item \textbf{Tài trợ, quảng cáo.}
+	\end{itemize}
+\end{enumerate}
+
+%\newpage
+\subsection{Luồng dữ liệu}
+
+\begin{figure}[h]
+	\centering
+	\begin{tikzpicture}[
+		node distance=5.2cm,
+		% Style cho các khối
+		entity/.style={
+			rectangle, 
+			draw=black, 
+			thick, 
+			minimum width=2.5cm, 
+			minimum height=1.5cm, 
+			align=center, 
+			rounded corners=5pt,
+			fill=white
+		},
+		system/.style={
+			rectangle, 
+			draw=black, 
+			thick, 
+			minimum width=3cm, 
+			minimum height=2cm, 
+			align=center, 
+			rounded corners=15pt,
+			fill=orange!10
+		},
+		arrow/.style={->, >=stealth, thick, blue!60!black},
+		label_text/.style={font=\footnotesize, align=center, fill=white, inner sep=2pt}
+		]
+		
+		% --- KHỐI TRUNG TÂM ---
+		\node (system) [system] {\textbf{HỆ THỐNG} \\ \textbf{KHO DỮ LIỆU}};
+		
+		% --- CÁC THỰC THỂ XUNG QUANH ---
+		
+		% Bên Trái: Nguồn dữ liệu
+		\node (sources) [entity, left of=system, xshift=-1.15cm] {
+			\textbf{Nhà cung cấp} \\ \textbf{dữ liệu} \\ (StatsBomb)
+		};
+		
+		% Bên Phải: Ban huấn luyện
+		\node (coaches) [entity, right of=system, xshift=1.6cm] {
+			\textbf{Ban huấn luyện} \\ (Người dùng cuối)
+		};
+		
+		% Bên Dưới: Tuyển trạch
+		\node (scouts) [entity, below of=system, yshift=1.4cm] {
+			\textbf{Bộ phận} \\ \textbf{tuyển trạch}
+		};
+		
+		% Bên Trên: Quản trị/Lãnh đạo
+		\node (board) [entity, above of=system, yshift=-1cm] {
+			\textbf{Ban lãnh đạo} \\ (Quản lý)
+		};
+		
+		% --- CÁC MŨI TÊN (LUỒNG DỮ LIỆU) ---
+		
+		% 1. Nguồn -> Hệ thống
+		\draw [arrow] ([yshift=0.3cm]sources.east) -- node[label_text, above] {Dữ liệu sự kiện} ([yshift=0.3cm]system.west);
+		\draw [arrow] ([yshift=-0.3cm]sources.east) -- node[label_text, below] {Thống kê} ([yshift=-0.3cm]system.west);
+		
+		% 2. Hệ thống <-> Ban huấn luyện
+		\draw [arrow] ([yshift=0.5cm]system.east) -- node[label_text, above] {Báo cáo chiến thuật \\ \& Hiệu suất} ([yshift=0.5cm]coaches.west);
+		\draw [arrow] ([yshift=-0.5cm]coaches.west) -- node[label_text, below] {Yêu cầu phân tích} ([yshift=-0.5cm]system.east);
+		
+		% 3. Hệ thống <-> Tuyển trạch
+		\draw [arrow] ([xshift=-0.5cm]system.south) -- node[label_text, left] {Hồ sơ cầu thủ \\ \& Chỉ số} ([xshift=-0.5cm]scouts.north);
+		\draw [arrow] ([xshift=0.5cm]scouts.north) -- node[label_text, right] {Tiêu chí lọc \\ ứng viên} ([xshift=0.5cm]system.south);
+		
+		% 4. Hệ thống -> Lãnh đạo
+		\draw [arrow] (system.north) -- node[label_text, right] {Báo cáo tổng quan \\ KPI} (board.south);
+		
+	\end{tikzpicture}
+	\caption{Sơ đồ luồng dữ liệu}
+	\label{fig:context_dfd}
+\end{figure}
+
+Dữ liệu đầu vào được thu thập từ GitHub của StatsBomb, sau đó được xử lý và lưu trữ tập trung trong kho dữ liệu.
+
+Ban lãnh đạo khai thác các báo cáo tổng quan và chỉ số KPI nhằm phục vụ công tác quản lý và đánh giá. Ban huấn luyện sử dụng các báo cáo phân tích chiến thuật và hiệu suất thi đấu dựa trên các yêu cầu phân tích cụ thể để hỗ trợ công tác huấn luyện và thi đấu. Đồng thời, bộ phận tuyển trạch khai thác hồ sơ cầu thủ và các chỉ số chuyên môn để xây dựng tiêu chí lọc và đánh giá ứng viên.
+
+Luồng dữ liệu hai chiều giữa các bộ phận nghiệp vụ và hệ thống kho dữ liệu nhằm đáp ứng các yêu cầu phân tích khác nhau, đồng thời đảm bảo dữ liệu được khai thác nhất quán, chính xác và hiệu quả.

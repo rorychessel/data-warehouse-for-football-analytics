@@ -1,0 +1,662 @@
+\section{Cơ sở lý thuyết}
+	\begin{frame}{Đặt vấn đề}
+		\begin{itemize}
+			\item \textbf{Bối cảnh:} Bóng đá hiện đại phụ thuộc vào dữ liệu sự kiện để tối ưu chiến thuật và tuyển trạch.
+			
+			\item \textbf{Vấn đề:} Dữ liệu thô thường phức tạp, phi cấu trúc (JSON), khó truy vấn trực tiếp.
+			
+			\item \textbf{Mục tiêu đồ án:}
+			\begin{itemize}
+				\item Xây dựng quy trình tự động thu thập và xử lý dữ liệu.
+				
+				\item Thiết kế Data Warehouse theo mô hình đa chiều.
+				
+				\item Tính toán các chỉ số nâng cao (xG, PPDA,...).
+			\end{itemize}
+			
+			\item \textbf{Phạm vi dữ liệu:} Case study CLB Barcelona (La Liga) từ nguồn dữ liệu mở StatsBomb.
+			
+			\item \textbf{Kiến trúc lựa chọn:} ETL (Extract - Transform - Load) tận dụng sức mạnh tính toán của Apache Spark để xử lý dữ liệu thô.
+		\end{itemize}
+	\end{frame}
+
+	%\begin{frame}{Tổng quan}
+	%	\begin{itemize}
+	%		\item \textbf{Data Warehouse (DW):} Cơ sở dữ liệu hướng chủ đề, tích hợp, bất biến và có tính thời gian, tối ưu cho OLAP.
+	%	\end{itemize}
+	%\end{frame}
+	
+	\begin{frame}{Các chỉ số cơ bản trong phân tích bóng đá}
+		\begin{itemize}
+			\item $xG$ (Expected Goals): Xác suất một cú sút thành bàn.
+			\item $G-xG$ (Goals minus Expected Goals): Hiệu số giữa tổng số bàn thắng thực tế và tổng xG của cầu thủ hoặc đội bóng.
+			\item $xA$ (Expected Assists): Xác suất một đường chuyền trở thành kiến tạo, được tính bằng cách lấy xG của cú sút ngay sau đường chuyền đó. 
+			\item $PPDA$ (Passes Per Defensive Action): Số đường chuyền trung bình của đội B trong khu vực $2/3$ sân cuối cùng (có tọa độ $x \ge 40$ trên sân có kích cỡ $120 \times 80$) trước khi đội A thực hiện một hành động phòng ngự.
+			\begin{equation} \label{eq:ppda}
+				\mathbf{PPDA}_A = \frac{\text{Số đường chuyền của B trong khu vực } x \ge 40}{\text{Số sự kiện phòng ngự của A trong khu vực } x \ge 40}
+			\end{equation}
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Các chỉ số cơ bản trong phân tích bóng đá}
+		\begin{itemize}
+			\item $TiB/90$ (Touches in Box/90): Số lần chạm bóng trong vòng cấm của đối phương, được chuẩn hóa theo 90 phút thi đấu.
+			\begin{equation} \label{eq:tib90}
+				\mathbf{TiB/90} = \frac{\text{Tổng số lần chạm bóng trong vòng cấm}}{\text{Tổng số phút đã chơi}} \times 90
+			\end{equation}
+			\item $PAdjI/90$ (Possession-Adjusted Interceptions/90): Số lần cắt bóng đã điều chỉnh theo quyền kiểm soát bóng.
+			\begin{equation} \label{eq:padji}
+				\mathbf{PAdjI/90} = \frac{\text{Tổng số lần cắt bóng}}{\text{Tổng số phút đã chơi}} \times 90 \times \frac{\text{Tỷ lệ \% kiểm soát bóng đội bạn}}{\text{Tỷ lệ \% kiểm soát bóng đội nhà}}
+			\end{equation}
+			\item $TSR$ (Tackles Success Rate): Tỷ lệ tắc bóng thành công.
+			\begin{equation} \label{eq:tsr}
+				\mathbf{TSR} = \frac{\text{Tổng số lần tắc bóng thành công}}{\text{Tổng số lần tắc bóng}} \times 100\%
+			\end{equation}
+		\end{itemize}
+	\end{frame}
+
+\section{Khảo sát hệ thống}
+
+	\subsection{Nhu cầu của các bên liên quan}
+		\begin{frame}{Nhu cầu của các bên liên quan}
+			\begin{itemize}
+				\item \textbf{Ban huấn luyện:} Phân tích hiệu suất đội nhà, phân tích đối thủ (chiến thuật, điểm yếu), tối ưu hóa kế hoạch tập luyện.
+				
+				\item \textbf{Bộ phận tuyển trạch:} Sàng lọc cầu thủ từ tập dữ liệu lớn, so sánh ứng viên tiềm năng.
+				
+				\item \textbf{Ban lãnh đạo:} Cái nhìn tổng quan, mang tính chiến lược trong điều hành đội bóng, đánh giá hiệu quả đầu tư, ra quyết định dài hạn.
+				
+				\item \textbf{Cầu thủ:} Tự đánh giá và phát triển, so sánh và đặt mục tiêu, đàm phán hợp đồng.
+				
+				\item \textbf{Bộ phận truyền thông và Marketing:} Sản xuất nội dung, cá nhân hóa trải nghiệm người hâm mộ.
+				
+				\item \textbf{Yêu cầu báo cáo:}
+				\begin{itemize}
+					\item Nhóm báo cáo phân tích diễn biến trận đấu \& chiến thuật.
+					
+					\item Nhóm báo cáo đánh giá hiệu suất cầu thủ.
+					
+					\item Nhóm báo cáo phân tích đội nhà \& đối thủ.
+					
+					\item Nhóm báo cáo tuyển trạch.
+				\end{itemize}
+			\end{itemize}
+		\end{frame}
+	
+		%\begin{frame}{Mindmap nhu cầu phân tích}
+		%	\begin{figure}[H]
+		%		\centering
+		%		\includegraphics[width=1\linewidth]{pics/mindmap.png}
+		%		\caption{Mindmap nhu cầu phân tích}
+		%		\label{mindmap}
+		%	\end{figure}
+		%\end{frame}
+	
+	%\subsection{Các luồng nghiệp vụ phân tích bóng đá}
+	%	\begin{frame}{Luồng nghiệp vụ phân tích đối thủ}
+	%		\begin{figure}[H]
+	%			\centering
+	%			\includegraphics[width=0.75\linewidth]{pics/business_flow_1.png}
+	%			\caption{Luồng nghiệp vụ phân tích đối thủ}
+	%			\label{business_flow_1}
+	%		\end{figure}
+	%	\end{frame}
+	
+	%	\begin{frame}{Luồng nghiệp vụ phân tích hiệu suất đội nhà}
+	%		\begin{figure}[H]
+	%			\centering
+	%			\includegraphics[width=0.75\linewidth]{pics/business_flow_2.png}
+	%			\caption{Luồng nghiệp vụ phân tích hiệu suất đội nhà}
+	%			\label{business_flow_2}
+	%		\end{figure}
+	%	\end{frame}
+	
+	%	\begin{frame}{Luồng nghiệp vụ tuyển trạch cầu thủ}
+	%		\begin{figure}[H]
+	%			\centering
+	%			\includegraphics[width=0.7\linewidth]{pics/business_flow_3.png}
+	%			\caption{Luồng nghiệp vụ tuyển trạch cầu thủ}
+	%			\label{business_flow_3}
+	%		\end{figure}
+	%	\end{frame}
+	
+	%\subsection{Mô hình kinh doanh và Luồng dữ liệu}
+	%	\begin{frame}{Mô hình kinh doanh}
+	%		\begin{figure}[H]
+	%			\centering
+	%			\includegraphics[width=1.025\linewidth]{pics/canvas.png}
+	%			\caption{Mô hình kinh doanh}
+	%			\label{canvas}
+	%		\end{figure}
+	%	\end{frame}
+	
+	%	\begin{frame}{Luồng dữ liệu}
+	%		\begin{figure}[H]
+	%			\centering
+	%			\includegraphics[width=1.025\linewidth]{pics/data_flow.png}
+	%			\caption{Luồng dữ liệu}
+	%			\label{data_flow}
+	%		\end{figure}
+	%	\end{frame}
+	
+	\subsection{Đặc điểm và quy mô dữ liệu}
+		\begin{frame}{Đặc điểm và quy mô dữ liệu}
+			\begin{itemize}
+				\item \textbf{Đặc điểm:}
+				\begin{itemize}
+					\item \textbf{Định dạng:} JSON bán cấu trúc.
+					\item \textbf{Cấu trúc:} Phức tạp, lồng nhau nhiều cấp. Một bản ghi sự kiện chứa nhiều object con như \texttt{tactics.lineup}, \texttt{shot.freeze\_frame} (vị trí 22 cầu thủ), \texttt{location[x,y]}.
+				\end{itemize}
+				
+				\item \textbf{Quy mô:}
+				\begin{itemize}
+					\item \textbf{Số lượng bản ghi:} Khoảng \textbf{2.000.000 -- 3.000.000} sự kiện. Trung bình một trận đấu chứa khoảng 3.500 sự kiện.
+					\item \textbf{Dung lượng lưu trữ:} Khoảng \textbf{1.5 GB -- 2.0 GB} dữ liệu thô (JSON).
+				\end{itemize}
+				
+				\item \textbf{Thách thức kỹ thuật:}
+				\begin{itemize}
+					\item Tuy dung lượng lưu trữ không quá lớn nhưng độ phức tạp của cấu trúc JSON yêu cầu tài nguyên tính toán lớn để thực hiện quá trình làm phẳng. Đây là lý do chính cho việc sử dụng \textbf{Apache Spark}.
+				\end{itemize}
+			\end{itemize}
+			
+			\textbf{Ghi chú:} Dữ liệu sử dụng trong đồ án được lấy từ \textbf{StatsBomb Free dataset} cho câu lạc bộ \textbf{FC Barcelona} thuộc giải đấu La Liga. Do giới hạn dữ liệu mở, đề tài chọn Barcelona làm \textit{case study} để minh hoạ quy trình xây dựng kho dữ liệu và báo cáo phân tích.
+		\end{frame}
+	
+\section{Thiết kế hệ thống}
+	\subsection{Khám phá dữ liệu}
+		\begin{frame}{Tổng quan về cấu trúc dữ liệu}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.9\linewidth]{pics/3.1.1.png}
+				\caption{Tổng quan về cấu trúc các file dữ liệu dạng JSON}
+				\label{3.1.1}
+			\end{figure}
+			Quá trình khảo sát cho thấy dữ liệu từ StatsBomb được tổ chức thành 3 nhóm đối tượng chính: Matches (Thông tin trận đấu), Lineups (Danh sách đăng ký thi đấu) và Events (Chi tiết sự kiện). Dữ liệu này được lưu trữ dưới dạng JSON lồng nhau thay vì dạng bảng phẳng truyền thống, phản ánh độ phức tạp cao của các tình huống trong bóng đá.
+		\end{frame}
+	
+		\begin{frame}{Cấu trúc schema}
+			\begin{table}[H]
+				\centering
+				\label{tab:schema_matches}
+				\begin{tabular}{|l|l|p{7cm}|}
+					\hline
+					\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\ \hline
+					match\_id & Long & Khóa chính của trận đấu. \\ \hline
+					match\_date & String & Ngày diễn ra trận đấu (YYYY-MM-DD). \\ \hline
+					kick\_off & String & Thời gian bắt đầu trận đấu. \\ \hline
+					home\_team & Struct & Đội nhà (home\_team\_id, home\_team\_name,...). \\ \hline
+					away\_team & Struct & Đội khách (away\_team\_id, away\_team\_name,...). \\ \hline
+					home\_score & Long & Số bàn thắng của đội nhà. \\ \hline
+					away\_score & Long & Số bàn thắng của đội khách. \\ \hline
+					competition & Struct & Giải đấu (id, name, country\_name). \\ \hline
+					season & Struct & Mùa giải (season\_id, season\_name). \\ \hline
+				\end{tabular}
+				\caption{Tóm tắt cấu trúc dữ liệu bảng Matches}
+			\end{table}
+		\end{frame}
+	
+		\begin{frame}{Cấu trúc schema}
+			\begin{table}[H]
+				\centering
+				\label{tab:schema_events}
+				\begin{tabular}{|l|l|p{6.25cm}|}
+					\hline
+					\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\ \hline
+					id & String & Khóa chính của sự kiện. \\ \hline
+					index & Long & Số thứ tự của sự kiện trong trận đấu. \\ \hline
+					timestamp & String & Thời điểm xảy ra sự kiện (phút:giây.miligiây). \\ \hline
+					type & Struct & Loại sự kiện (Pass, Shot,...). \\ \hline
+					possession\_team & Struct & Đội đang kiểm soát bóng tại thời điểm đó. \\ \hline
+					play\_pattern & Struct & Tình huống bóng (From Corner,...). \\ \hline
+					player & Struct & Thông tin cầu thủ thực hiện hành động (id, name). \\ \hline
+					location & Array$<$Double$>$ & Tọa độ trên sân dạng mảng $[x, y]$. \\ \hline
+					shot & Struct & Chi tiết cú sút: statsbomb\_xg, outcome, body\_part,... \\ \hline
+					pass & Struct & Chi tiết đường chuyền: length, angle, height,... \\ \hline
+					tactics & Struct & Thông tin đội hình chiến thuật và vị trí. \\ \hline
+				\end{tabular}
+				\caption{Tóm tắt cấu trúc dữ liệu bảng Events}
+			\end{table}
+		\end{frame}
+		
+		\begin{frame}{Cấu trúc schema}
+			\begin{table}[H]
+				\centering
+				\label{tab:schema_lineups}
+				\begin{tabular}{|l|l|p{5.75cm}|}
+					\hline
+					\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\ \hline
+					team\_id & Long & ID của đội bóng. \\ \hline
+					team\_name & String & Tên đội bóng. \\ \hline
+					lineup & Array$<$Struct$>$ & Danh sách cầu thủ đăng ký thi đấu. Dữ liệu là một mảng chứa thông tin cầu thủ. \\ \hline
+					\textit{-- element} & \textit{Struct} & \textit{Thông tin chi tiết của cầu thủ trong mảng lineup:} \\ 
+					\hspace{0.5cm} .player\_id & Long & ID cầu thủ. \\ 
+					\hspace{0.5cm} .player\_name & String & Tên đầy đủ cầu thủ. \\ 
+					\hspace{0.5cm} .jersey\_number & Long & Số áo thi đấu. \\ 
+					\hspace{0.5cm} .country & Struct & Quốc tịch cầu thủ. \\ 
+					\hspace{0.5cm} .cards & Array & Danh sách thẻ phạt (nếu có). \\ \hline
+				\end{tabular}
+				\caption{Tóm tắt cấu trúc dữ liệu bảng Lineups}
+			\end{table}
+		\end{frame}
+
+		\begin{frame}{Chất lượng dữ liệu}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.6\linewidth]{pics/3.1.3.png}
+				\caption{Chất lượng dữ liệu sự kiện}
+				\label{3.1.3}
+			\end{figure}
+			
+			Phân tích trên tập dữ liệu đại diện (một trận El Clásico ở mùa giải 2017/2018) cho thấy chất lượng dữ liệu tương đối tốt nhưng vẫn tồn tại Null. Cụ thể, trường location xuất hiện các giá trị Null ở các sự kiện mang tính thủ tục (như tiếng còi bắt đầu hiệp đấu). Không phát hiện trùng lặp khóa chính (ID) trong mẫu thử.
+		\end{frame}
+	
+		%\begin{frame}{Tổng quan sự kiện trận đấu}
+		%	Dữ liệu sự kiện cho thấy sự phân bố không đồng đều giữa các loại hành động. Các hành động mang tính kiểm soát như \textit{Pass} (Chuyền bóng) và \textit{Ball Receipt} (Nhận bóng) chiếm tỷ trọng áp đảo. Trong khi đó, các sự kiện mang tính quyết định trận đấu như \textit{Shot} hay \textit{Goal} là các sự kiện hiếm khi xảy ra.
+			
+		%	\begin{figure}[H]
+		%		\centering
+		%		\includegraphics[width=0.7\linewidth]{pics/3.1.4 (1).png}
+		%		\caption{Top 10 loại sự kiện phổ biến nhất trong một trận đấu mẫu}
+		%		\label{3.1.4 (1)}
+		%	\end{figure}
+		%\end{frame}
+	
+		%\begin{frame}{Phân tích không gian}
+		%	Tận dụng trường thông tin \textit{location} (tọa độ $[x, y]$) được trích xuất từ cấu trúc JSON lồng nhau, ta có thể xây dựng Bản đồ nhiệt (Heatmap) để quan sát mật độ di chuyển của cầu thủ.
+			
+		%	\begin{figure}[H]
+		%		\centering
+		%		\includegraphics[width=0.7\linewidth]{pics/3.1.4 (2).png}
+		%		\caption{Bản đồ nhiệt (Heatmap) vị trí hoạt động trên sân}
+		%		\label{3.1.4 (2)}
+		%	\end{figure}
+		%\end{frame}
+	
+		%\begin{frame}{Phân phối kỹ thuật cầu thủ}
+		%	Biểu đồ Histogram mô tả phân phối tỷ lệ chuyền bóng chính xác của các cầu thủ tại giải đấu. Biểu đồ có dạng lệch trái rõ rệt, với đa số cầu thủ duy trì tỷ lệ chuyền bóng thành công trên 75\%. Điều này cho thấy mặt bằng kỹ thuật tại giải đấu La Liga là rất cao, đòi hỏi hệ thống phân tích phải có độ nhạy lớn để phân loại được các cầu thủ xuất sắc.
+			
+		%	\begin{figure}[H]
+		%		\centering
+		%		\includegraphics[width=0.7\linewidth]{pics/3.1.4 (3).png}
+		%		\caption{Phân phối tỷ lệ chuyền bóng chính xác của cầu thủ}
+		%		\label{3.1.4 (3)}
+		%	\end{figure}
+		%\end{frame}
+	
+		%\begin{frame}{Kiểm chứng chỉ số nâng cao}
+		%	Kết quả phân tích tương quan tuyến tính giữa \textit{Bàn thắng kỳ vọng (xG)} và \textit{Bàn thắng thực tế} cho thấy mối tương quan thuận chặt chẽ, các điểm dữ liệu phân bố bám sát đường chéo tham chiếu. Như vậy, $xG$ là một chỉ số dự báo đáng tin cậy cho hiệu suất ghi bàn và được sử dụng làm một trong những chỉ số Fact chính trong Kho dữ liệu.
+			
+		%	\begin{figure}[H]
+		%		\centering
+		%		\includegraphics[width=0.7\linewidth]{pics/3.1.4 (4).png}
+		%		\caption{Tương quan giữa Bàn thắng kỳ vọng (xG) và Bàn thắng thực tế}
+		%		\label{3.1.4 (4)}
+		%	\end{figure}
+		%\end{frame}
+	
+	\subsection{Thiết kế hệ thống}
+		\begin{frame}{Kiến trúc Data Warehouse}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.8\linewidth]{pics/ktruc_etl.png}
+				\caption{Kiến trúc Data Warehouse}
+				\label{ktruc_etl}
+			\end{figure}
+			
+			\begin{itemize}
+				\item \textbf{Nguồn dữ liệu (Data source):} Dữ liệu từ GitHub của StatsBomb.
+				
+				\item \textbf{Vùng đệm (Staging/Data Lake):} Sử dụng \textbf{MinIO} để lưu trữ dữ liệu thô.
+				
+				\item \textbf{Kho dữ liệu (Data Warehouse):} Sử dụng \textbf{Apache Spark} để đọc dữ liệu từ MinIO, làm sạch, chuẩn hóa. Tải dữ liệu sạch vào \textbf{PostgreSQL}.
+				
+				\item \textbf{Phân tích và báo cáo (BI):} Sử dụng \textbf{Microsoft PowerBI} kết nối trực tiếp với PostgreSQL.
+			\end{itemize}
+		\end{frame}
+		
+		\begin{frame}{Đường ống dữ liệu}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.8\linewidth]{pics/data_pipeline.png}
+				\caption{Đường ống dữ liệu}
+				\label{data_pipeline}
+			\end{figure}
+			
+			Hệ thống sử dụng đường ống dữ liệu tự động hóa được điều phối bởi \textbf{Apache Airflow} gồm các giai đoạn:
+			
+			\begin{itemize}
+				\item \textbf{Giai đoạn 1: Trích xuất và tập kết (Extract \& Ingest)}
+				
+				\item \textbf{Giai đoạn 2: Chuyển đổi và làm sạch (Transform)}
+				
+				\item \textbf{Giai đoạn 3: Nạp dữ liệu (Load)}
+				
+				\item \textbf{Giai đoạn 4: Khai thác và phân phối (Serving)}
+			\end{itemize}
+		\end{frame}
+	
+		\begin{frame}{Hệ thống chiều khái niệm}
+			\textbf{Nhóm chiều thời gian:} Cung cấp trục thời gian cho phân tích.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.9\linewidth]{pics/dim_date.png}
+				\caption{Nhóm chiều thời gian}
+				\label{dim_date}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Hệ thống chiều khái niệm}
+			\textbf{Nhóm chiều thông tin trận đấu:} Cung cấp thông tin ngữ cảnh cho các trận đấu.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1\linewidth]{pics/dim_match.png}
+				\caption{Nhóm chiều thông tin trận đấu}
+				\label{dim_match}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Hệ thống chiều khái niệm}
+			\textbf{Nhóm chiều thông tin đội bóng:} Cung cấp thông tin cơ bản của các đội bóng.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.8\linewidth]{pics/dim_team.png}
+				\caption{Nhóm chiều thông tin đội bóng}
+				\label{dim_team}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Hệ thống chiều khái niệm}
+			\textbf{Nhóm chiều thông tin cầu thủ:} Cung cấp thông tin cơ bản của các cầu thủ.
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1\linewidth]{pics/dim_player.png}
+				\caption{Nhóm chiều thông tin cầu thủ}
+				\label{dim_player}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Hệ thống chiều khái niệm}
+			\textbf{Nhóm chiều thông tin sự kiện:} Các loại hành động, tình huống bóng trong trận đấu (chuyền bóng, sút, tình huống cố định,...).
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.6\linewidth]{pics/dim_event_type.png}
+				\caption{Nhóm chiều thông tin sự kiện}
+				\label{dim_event_type}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Hệ thống chiều khái niệm}
+			\textbf{Nhóm chiều tình huống bóng:} Các loại hành động, tình huống bóng trong trận đấu (chuyền bóng, sút, tình huống cố định,...).
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.25\linewidth]{pics/dim_play_pattern.png}
+				\caption{Nhóm chiều tình huống bóng}
+				\label{dim_play_pattern}
+			\end{figure}
+		
+			\textbf{Nhóm chiều khu vực sân:} Mô tả vị trí trên sân
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.5\linewidth]{pics/dim_location.png}
+				\caption{Nhóm chiều khu vực sân}
+				\label{dim_location}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Mô hình dữ liệu Logic}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.9\linewidth]{pics/logic.png}
+				\caption{Mô hình dữ liệu logic}
+				\label{logic}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Mô hình dữ liệu vật lý}
+			Mô hình dữ liệu vật lý của bảng fact\_event:
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.7\linewidth]{pics/3.8.1.png}
+				\caption{Mô hình dữ liệu vật lý của bảng fact\_event}
+				\label{3.8.1}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Mô hình dữ liệu vật lý}
+			Mô hình dữ liệu vật lý của bảng fact\_player\_match\_stats:
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.8\linewidth]{pics/3.8.2.png}
+				\caption{Mô hình dữ liệu vật lý của bảng fact\_player\_match\_stats}
+				\label{3.8.2}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Mô hình dữ liệu vật lý}
+			Mô hình dữ liệu vật lý của bảng fact\_team\_match\_stats:
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.95\linewidth]{pics/3.8.3.png}
+				\caption{Mô hình dữ liệu vật lý của bảng fact\_team\_match\_stats}
+				\label{3.8.3}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Mô hình dữ liệu vật lý}
+			Mô hình dữ liệu vật lý của bảng fact\_player\_season\_stats:
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.9\linewidth]{pics/3.8.4.png}
+				\caption{Mô hình dữ liệu vật lý của bảng fact\_player\_season\_stats}
+				\label{3.8.4}
+			\end{figure}
+		\end{frame}
+	
+\section{Cài đặt hệ thống}
+	\subsection{Quá trình xử lý dữ liệu}
+		\begin{frame}{Cấu hình môi trường và kết nối dữ liệu}
+			Sử dụng thư viện \texttt{hadoop-aws} để Spark có thể giao tiếp trực tiếp với MinIO thông qua giao thức S3 (\texttt{s3a://}). Cấu hình \texttt{fs.s3a.path.style.access} được đặt là \texttt{true} để đảm bảo tương thích với kiến trúc MinIO chạy trên Docker nội bộ.
+			
+			Việc ghi dữ liệu vào PostgreSQL được thực hiện thông qua JDBC Driver (\texttt{org.postgresql.Driver}). Các cấu hình kết nối được tham số hóa để đảm bảo bảo mật và dễ dàng thay đổi môi trường.
+			
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=\linewidth]{pics/4.1.1.png}
+				\caption{Cấu hình kết nối Apache Spark với MinIO}
+				\label{4.1.1}
+			\end{figure}
+		\end{frame}
+	
+		\begin{frame}{Xử lý dữ liệu cho các bảng Dim}
+			\textbf{Tính toán thời gian hiệu lực:}
+			\begin{itemize}
+				\item \texttt{effective\_from}: Là ngày diễn ra của trận đấu đầu tiên (\texttt{match\_date}) xuất hiện sự thay đổi.
+				
+				\item \texttt{effective\_to}: Sử dụng hàm \texttt{lead()} để lấy ngày bắt đầu của bản ghi kế tiếp trừ đi 1 ngày. Nếu không có bản ghi kế tiếp (dữ liệu là bản ghi mới nhất), giá trị được gán mặc định là "9999-12-31".
+				
+				\item \textbf{Đánh dấu hiện hành:} Cột \texttt{is\_current} là \texttt{true} nếu \texttt{effective\_to} là "9999-12-31".
+			\end{itemize}
+			\begin{center}
+				\includegraphics[width=1\linewidth]{pics/4.1.2.4.png}
+			\end{center}
+		\end{frame}
+	
+		\begin{frame}{Xử lý dữ liệu cho các bảng Dim}
+			Thuật toán SCD Type 2 (Slowly Changing Dimension) có thể giúp giải quyết vấn đề về tính biến động theo thời gian của dữ liệu. \\
+			
+			\textbf{Phân hoạch dữ liệu:} Dữ liệu nguồn được gom nhóm theo khóa (ví dụ: \texttt{player\_id} hoặc \texttt{team\_id}) và sắp xếp tăng dần theo thời gian.
+			\begin{center}
+				\includegraphics[width=1\linewidth]{pics/4.1.2.1.png}
+			\end{center}
+		
+			\textbf{Phát hiện thay đổi:} Sử dụng Window Function \texttt{lag()} để so sánh giá trị của bản ghi hiện tại với bản ghi liền trước.
+			\begin{center}
+				\includegraphics[width=1\linewidth]{pics/4.1.2.2.png}
+				\includegraphics[width=0.6\linewidth]{pics/4.1.2.3.png}
+			\end{center}
+		
+			\textbf{Kết quả:} Bảng dim\_player và dim\_team lưu trữ lịch sử chuyển nhượng và thay đổi nhân sự, cho phép truy vấn chính xác trạng thái của đối tượng tại bất kỳ thời điểm nào trong quá khứ.
+		\end{frame}
+	
+		\begin{frame}{Xử lý dữ liệu cho các bảng Fact}
+			Tự động quét schema của DataFrame để tìm tất cả các cấu trúc chứa trường \texttt{outcome}, giúp hợp nhất cấu trúc với các trường lồng nhau phức tạp trong file JSON gốc thành trường \texttt{outcome\_name} duy nhất.
+			\begin{center}
+				\includegraphics[width=1\linewidth]{pics/4.1.3.1.png}
+			\end{center}
+			
+			Thời gian xảy ra sự kiện được chuyển đổi từ dạng "HH:mm:ss.SSS" sang dạng số thực (giây) để phục vụ các tính toán khoảng cách thời gian giữa các sự kiện.
+			\begin{center}
+				\includegraphics[width=1\linewidth]{pics/4.1.3.3.png}
+			\end{center}
+		\end{frame}
+	
+		\begin{frame}{Xử lý dữ liệu cho các bảng Fact}
+			Chuẩn hóa tọa độ (x, y) thành các ID từ 1 đến 18 và khu vực đặc biệt (Penalty Box). Logic này sử dụng chuỗi điều kiện when-otherwise lồng nhau, giúp tối ưu tốc độ truy vấn phân tích không gian sau này.
+			\begin{center}
+				\includegraphics[width=1\linewidth]{pics/4.1.3.2.png}
+			\end{center}
+		\end{frame}
+	
+		\begin{frame}{Xử lý dữ liệu cho các bảng Fact}
+			\textbf{Sử dụng Broadcast Join để tối ưu hiệu năng} \\
+			Khi thực hiện Lookup dữ liệu từ các bảng Dimension có kích thước nhỏ (như dim\_event\_type, dim\_play\_pattern) vào bảng Fact khổng lồ (fact\_event), hệ thống sử dụng kỹ thuật Broadcast Join.
+			
+			\begin{itemize}
+				\item \textbf{Cơ chế:} Spark sẽ gửi bản sao của bảng Dimension đến tất cả các node worker thay vì thực hiện Sort-Merge Join (yêu cầu shuffle cả bảng Fact lớn).
+				
+				\item \textbf{Cài đặt:} Sử dụng hàm \texttt{broadcast()} bao quanh các DataFrame bảng Dimension trong câu lệnh join.
+				\begin{center}
+					\includegraphics[width=1\linewidth]{pics/4.1.3.10.png}
+				\end{center}
+				
+				\item \textbf{Hiệu quả:} Giảm lưu lượng mạng và loại bỏ hiện tượng phân bổ dữ liệu không đồng đều trên các phân vùng khi join.
+			\end{itemize}
+		\end{frame}
+	
+	\begin{frame}{Xử lý dữ liệu cho các bảng Fact}
+		\textbf{Chuẩn hóa dữ liệu thống kê tổng hợp} \\
+		Thuật toán tính số phút thi đấu thực tế:
+		
+		\begin{itemize}
+			\item \textbf{Xác định thời điểm vào sân:} 0 phút cho cầu thủ đá chính, hoặc phút thay người cho cầu thủ dự bị.
+			\begin{center}
+				\includegraphics[width=\linewidth]{pics/4.1.3.4.png}
+			\end{center}
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Xử lý dữ liệu cho các bảng Fact}
+		\begin{itemize}
+			\item \textbf{Xác định thời điểm rời sân:} Phút thay người (nếu bị thay ra) hoặc phút bị thẻ đỏ.
+			\begin{center}
+				\includegraphics[width=0.8\linewidth]{pics/4.1.3.5.png}
+			\end{center}
+			
+			\item \textbf{Công thức:} Số phút $=$ Thời điểm rời sân/hết trận $-$ Thời điểm vào sân.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Xử lý dữ liệu cho các bảng Fact}
+		Tính toán các chỉ số nâng cao:
+		\begin{itemize}
+			\item \textbf{xG/xA:} Tổng hợp từ dữ liệu sự kiện chi tiết có sẵn trong nguồn dữ liệu gốc.
+			
+			\item \textbf{Touches in Box:} Đếm số lần chạm bóng có tọa độ nằm trong vòng cấm địa đối phương.
+			
+			\item \textbf{TSR:} Tính toán dựa trên kết quả của các sự kiện tranh chấp (Duel).
+			\begin{center}
+				\includegraphics[width=1\linewidth]{pics/4.1.3.6.png}
+			\end{center}
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{Xử lý dữ liệu cho các bảng Fact}
+		\begin{itemize}
+			\item \textbf{PPDA:} Sử dụng Window Functions để tính toán số đường chuyền của đối thủ trực tiếp trên dòng dữ liệu mà không cần Self-Join gây tốn kém tài nguyên.
+			\begin{center}
+				\includegraphics[width=0.8\linewidth]{pics/4.1.3.8.png}
+				\includegraphics[width=0.9\linewidth]{pics/4.1.3.7.png}
+				\includegraphics[width=0.6\linewidth]{pics/4.1.3.9.png}
+			\end{center}
+		\end{itemize}
+	\end{frame}
+	
+	\subsection{Tự động hóa quy trình xử lý với Apache Airflow}
+		\begin{frame}{Tự động hóa quy trình xử lý với Apache Airflow}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1\linewidth]{pics/4.2.3.png}
+				\caption{Luồng thực hiện các task trên Apache Airflow}
+				\label{4.2.3}
+			\end{figure}
+		\end{frame}
+		
+	\subsection{Xây dựng báo cáo phân tích}	
+		\begin{frame}{Dashboard phân tích trận đấu}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1\linewidth]{pics/4.3.1.png}
+				\caption{Dashboard phân tích trận đấu}
+				\label{4.3.1}
+			\end{figure}
+		\end{frame}
+		
+		\begin{frame}{Dashboard phân tích cầu thủ theo trận đấu}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1\linewidth]{pics/4.3.2.png}
+				\caption{Dashboard phân tích cầu thủ theo trận đấu}
+				\label{4.3.2}
+			\end{figure}
+		\end{frame}
+		
+		\begin{frame}{Dashboard phân tích cầu thủ theo mùa giải}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1\linewidth]{pics/4.3.3.png}
+				\caption{Dashboard phân tích cầu thủ theo mùa giải}
+				\label{4.3.3}
+			\end{figure}
+		\end{frame}
+			
+		\begin{frame}{Dashboard phân tích đối thủ}
+			\begin{figure}[H]
+				\centering
+				\includegraphics[width=1\linewidth]{pics/4.3.4.png}
+				\caption{Dashboard phân tích đội bóng đối thủ}
+				\label{4.3.4}
+			\end{figure}
+		\end{frame}
+	
+\section{Kết luận và Hướng phát triển}
+	\begin{frame}{Kết luận \& Hướng phát triển}
+		
+		\textbf{Kết quả đạt được}
+		\begin{itemize}
+			\item Xây dựng pipeline dữ liệu tự động (Airflow -- MinIO -- Spark) cho dữ liệu bóng đá bán cấu trúc.
+			\item Thiết kế kho dữ liệu lược đồ sao trên PostgreSQL, tối ưu cho các chỉ số phân tích (xG, xA, PPDA).
+			\item Phát triển hệ thống Dashboard Power BI hỗ trợ phân tích và ra quyết định.
+		\end{itemize}
+		
+		\vspace{0.2cm}
+		\textbf{Hạn chế}
+		\begin{itemize}
+			\item Hệ thống xử lý theo lô, chưa hỗ trợ phân tích thời gian thực.
+			\item Phạm vi dữ liệu còn hạn chế do nguồn StatsBomb mở.
+		\end{itemize}
+		
+		\vspace{0.2cm}
+		\textbf{Hướng phát triển}
+		\begin{itemize}
+			\item Tích hợp xử lý thời gian thực (Kafka, Spark Streaming).
+			\item Mở rộng hạ tầng đám mây để tăng khả năng mở rộng và hiệu năng.
+		\end{itemize}
+		
+	\end{frame}
+	
+\section{Tài liệu tham khảo}
+	\begin{frame}[allowframebreaks]{Tài liệu tham khảo}
+		\nocite{*}
+		\printbibliography
+	\end{frame}

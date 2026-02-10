@@ -1,0 +1,215 @@
+\section{Quá trình xử lý dữ liệu}
+
+\subsection{Cấu hình môi trường và kết nối dữ liệu}
+
+Để đảm bảo tính nhất quán và khả năng mở rộng, hệ thống được xây dựng trên nền tảng Apache Spark, kết nối với Data Lake (MinIO) và Data Warehouse (PostgreSQL) thông qua các giao thức chuẩn.
+
+Sử dụng thư viện \texttt{hadoop-aws} để Spark có thể giao tiếp trực tiếp với MinIO thông qua giao thức S3 (\texttt{s3a://}). Cấu hình \texttt{fs.s3a.path.style.access} được đặt là \texttt{true} để đảm bảo tương thích với kiến trúc MinIO chạy trên Docker nội bộ.
+
+Việc ghi dữ liệu vào PostgreSQL được thực hiện thông qua JDBC Driver (\texttt{org.postgresql.Driver}). Các cấu hình kết nối được tham số hóa để đảm bảo bảo mật và dễ dàng thay đổi môi trường.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/4.1.1.png}
+	\caption{Cấu hình kết nối Apache Spark với MinIO}
+	\label{4.1.1}
+\end{figure}
+
+\subsection{Xử lý dữ liệu cho các bảng Dim}
+
+Một trong những thách thức lớn nhất của dữ liệu bóng đá là tính biến động theo thời gian (ví dụ: cầu thủ chuyển đội, đội bóng thay huấn luyện viên). Thuật toán SCD Type 2 (Slowly Changing Dimension) được cài đặt bằng PySpark có thể giúp giải quyết vấn đề này. Thuật toán giúp phát hiện và xử lý thay đổi:
+
+\begin{itemize}
+	\item \textbf{Phân hoạch dữ liệu:} Dữ liệu nguồn được gom nhóm theo khóa (ví dụ: \texttt{player\_id} hoặc \texttt{team\_id}) và sắp xếp tăng dần theo thời gian.
+	\begin{center}
+		\includegraphics[width=1\linewidth]{pics/4.1.2.1.png}
+	\end{center}
+
+	\item \textbf{Phát hiện thay đổi:} Sử dụng Window Function \texttt{lag()} để so sánh giá trị của bản ghi hiện tại với bản ghi liền trước. Một bản ghi mới được xác định khi:
+	\begin{itemize}
+		\item Là bản ghi đầu tiên trong lịch sử.
+		
+		\item Có sự thay đổi ở các trường quan trọng (ví dụ: \texttt{team\_name}, \texttt{manager\_name}).
+	\end{itemize}
+	\begin{center}
+		\includegraphics[width=1\linewidth]{pics/4.1.2.2.png}
+		\includegraphics[width=1\linewidth]{pics/4.1.2.3.png}
+	\end{center}
+
+	\item \textbf{Tính toán thời gian hiệu lực:}
+	\begin{itemize}
+		\item \texttt{effective\_from}: Là ngày diễn ra của trận đấu đầu tiên (\texttt{match\_date}) xuất hiện sự thay đổi.
+		
+		\item \texttt{effective\_to}: Sử dụng hàm \texttt{lead()} để lấy ngày bắt đầu của bản ghi kế tiếp trừ đi 1 ngày. Nếu không có bản ghi kế tiếp (dữ liệu là bản ghi mới nhất), giá trị được gán mặc định là "9999-12-31".
+		
+		\item \textbf{Đánh dấu hiện hành:} Cột \texttt{is\_current} là \texttt{true} nếu \texttt{effective\_to} là "9999-12-31".
+	\end{itemize}
+	\begin{center}
+		\includegraphics[width=1\linewidth]{pics/4.1.2.4.png}
+	\end{center}
+\end{itemize}
+
+\textbf{Kết quả:} Bảng dim\_player và dim\_team lưu trữ lịch sử chuyển nhượng và thay đổi nhân sự, cho phép truy vấn chính xác trạng thái của đối tượng tại bất kỳ thời điểm nào trong quá khứ.
+
+\subsection{Xử lý dữ liệu cho các bảng Fact}
+
+\subsubsection{Chuẩn hóa dữ liệu sự kiện}
+
+Tự động quét schema của DataFrame để tìm tất cả các cấu trúc chứa trường \texttt{outcome}, giúp hợp nhất cấu trúc với các trường lồng nhau phức tạp trong file JSON gốc thành trường \texttt{outcome\_name} duy nhất.
+\begin{center}
+	\includegraphics[width=1\linewidth]{pics/4.1.3.1.png}
+\end{center}
+
+Chuẩn hóa tọa độ (x, y) thành các ID từ 1 đến 18 và khu vực đặc biệt (Penalty Box). Logic này sử dụng chuỗi điều kiện when-otherwise lồng nhau, giúp tối ưu tốc độ truy vấn phân tích không gian sau này.
+\begin{center}
+	\includegraphics[width=1\linewidth]{pics/4.1.3.2.png}
+\end{center}
+
+Thời gian xảy ra sự kiện được chuyển đổi từ dạng "HH:mm:ss.SSS" sang dạng số thực (giây) để phục vụ các tính toán khoảng cách thời gian giữa các sự kiện.
+\begin{center}
+	\includegraphics[width=1\linewidth]{pics/4.1.3.3.png}
+\end{center}
+
+\subsubsection{Sử dụng Broadcast Join để tối ưu hiệu năng}
+
+Khi thực hiện Lookup dữ liệu từ các bảng Dimension có kích thước nhỏ (như dim\_event\_type, dim\_play\_pattern) vào bảng Fact khổng lồ (fact\_event), hệ thống sử dụng kỹ thuật Broadcast Join.
+
+\begin{itemize}
+	\item \textbf{Cơ chế:} Spark sẽ gửi bản sao của bảng Dimension đến tất cả các node worker thay vì thực hiện Sort-Merge Join (yêu cầu shuffle cả bảng Fact lớn).
+	
+	\item \textbf{Cài đặt:} Sử dụng hàm \texttt{broadcast()} bao quanh các DataFrame bảng Dimension trong câu lệnh join.
+	\begin{center}
+		\includegraphics[width=1\linewidth]{pics/4.1.3.10.png}
+	\end{center}
+	
+	\item \textbf{Hiệu quả:} Giảm lưu lượng mạng và loại bỏ hiện tượng phân bổ dữ liệu không đồng đều trên các phân vùng khi join.
+\end{itemize}
+
+\subsubsection{Chuẩn hóa dữ liệu thống kê tổng hợp}
+
+Thuật toán tính số phút thi đấu thực tế:
+
+\begin{itemize}
+	\item \textbf{Xác định thời điểm vào sân:} 0 phút cho cầu thủ đá chính, hoặc phút thay người cho cầu thủ dự bị.
+	\begin{center}
+		\includegraphics[width=1\linewidth]{pics/4.1.3.4.png}
+	\end{center}
+	
+	\item \textbf{Xác định thời điểm rời sân:} Phút thay người (nếu bị thay ra) hoặc phút bị thẻ đỏ.
+	\begin{center}
+		\includegraphics[width=1\linewidth]{pics/4.1.3.5.png}
+	\end{center}
+	
+	\item \textbf{Công thức:} Số phút $=$ Thời điểm rời sân/hết trận $-$ Thời điểm vào sân.
+\end{itemize}
+
+Tính toán các chỉ số nâng cao:
+
+\begin{itemize}
+	\item \textbf{xG/xA:} Tổng hợp từ dữ liệu sự kiện chi tiết có sẵn trong nguồn dữ liệu gốc.
+	
+	\item \textbf{Touches in Box:} Đếm số lần chạm bóng có tọa độ nằm trong vòng cấm địa đối phương.
+	
+	\item \textbf{TSR:} Tính toán dựa trên kết quả của các sự kiện tranh chấp (Duel).
+	\begin{center}
+		\includegraphics[width=1\linewidth]{pics/4.1.3.6.png}
+	\end{center}
+	
+	\item \textbf{PPDA:} Sử dụng Window Functions để tính toán số đường chuyền của đối thủ trực tiếp trên dòng dữ liệu mà không cần Self-Join gây tốn kém tài nguyên.
+	\begin{center}
+		\includegraphics[width=1\linewidth]{pics/4.1.3.8.png}
+		\includegraphics[width=1\linewidth]{pics/4.1.3.7.png}
+		\includegraphics[width=1\linewidth]{pics/4.1.3.9.png}
+	\end{center}
+\end{itemize}
+
+\section{Tự động hóa quy trình xử lý với Apache Airflow}
+
+Để quản lý sự phụ thuộc phức tạp giữa các job PySpark và đảm bảo quy trình ETL vận hành ổn định định kỳ, hệ thống sử dụng **Apache Airflow** làm công cụ điều phối (Orchestration). Toàn bộ quy trình được định nghĩa dưới dạng một Đồ thị không chu trình có hướng (DAG - Directed Acyclic Graph).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/4.2.1.png}
+	\caption{Giao diện của Apache Airflow}
+	\label{4.2.1}
+\end{figure}
+
+\subsection{Thiết kế luồng dữ liệu}
+
+Quy trình xử lý dữ liệu bóng đá cần phải tuân thủ nghiêm ngặt thứ tự ưu tiên để đảm bảo tính toàn vẹn. DAG được chia thành 4 giai đoạn xử lý tuần tự:
+
+\begin{enumerate}
+	\item \textbf{Giai đoạn 1: Thu thập dữ liệu}
+	\begin{itemize}
+		\item Task: \texttt{ingest\_statsbomb\_data}
+		\item Sử dụng \texttt{PythonOperator} để tải dữ liệu JSON mới nhất từ GitHub và đẩy vào MinIO (khu vực Staging).
+	\end{itemize}
+	
+	\item \textbf{Giai đoạn 2: Xử lý Dimensions (Chạy song song)}
+	\begin{itemize}
+		\item Các bảng dim\_date, dim\_location, dim\_event\_type, dim\_play\_pattern được xử lý song song vì chúng độc lập với nhau.
+		\item dim\_player và dim\_team cũng được kích hoạt trong giai đoạn này để sẵn sàng cho các bảng Fact.
+		\item Sử dụng \texttt{SparkSubmitOperator} để submit các job PySpark lên cluster.
+	\end{itemize}
+	
+	\item \textbf{Giai đoạn 3: Xử lý Fact chi tiết}
+	\begin{itemize}
+		\item Task: \texttt{fact\_event}
+		\item Task này chỉ được phép chạy khi tất cả các task ở Giai đoạn 2 đã chạy thành công. Điều này đảm bảo khi bảng fact\_event thực hiện Lookup ID, các khóa ngoại đã tồn tại trong bảng Dimension.
+	\end{itemize}
+	
+	\item \textbf{Giai đoạn 4: Tổng hợp dữ liệu}
+	\begin{itemize}
+		\item Task: \texttt{fact\_player\_match\_stats} và \texttt{fact\_team\_match\_stats} chạy song song, lấy dữ liệu nguồn từ \texttt{fact\_event} vừa tạo.
+		\item Task: \texttt{fact\_player\_season\_stats} chạy cuối cùng, tổng hợp dữ liệu từ bảng stats theo trận đấu.
+	\end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/4.2.3.png}
+	\caption{Luồng thực hiện các task trên Apache Airflow}
+	\label{4.2.3}
+\end{figure}
+
+\subsection{Cấu hình kỹ thuật và Giám sát}
+
+\textbf{SparkSubmitOperator:}
+Mỗi bước biến đổi dữ liệu tương ứng với một file mã nguồn PySpark độc lập. Airflow kích hoạt, gửi lệnh \texttt{spark-submit} tới Spark Master container kèm theo các cấu hình tài nguyên (Driver Memory, Executor Memory) phù hợp với độ nặng của từng task.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/4.2.2.png}
+	\caption{Kết quả thực thi của các task trên Apache Airflow}
+	\label{4.2.2}
+\end{figure}
+
+\section{Xây dựng báo cáo phân tích}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/4.3.1.png}
+	\caption{Dashboard phân tích trận đấu}
+	\label{4.3.1}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/4.3.2.png}
+	\caption{Dashboard phân tích cầu thủ theo trận đấu}
+	\label{4.3.2}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/4.3.3.png}
+	\caption{Dashboard phân tích cầu thủ theo mùa giải}
+	\label{4.3.3}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/4.3.4.png}
+	\caption{Dashboard phân tích đội bóng đối thủ}
+	\label{4.3.4}
+\end{figure}

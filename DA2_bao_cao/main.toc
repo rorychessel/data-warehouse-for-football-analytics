@@ -1,0 +1,78 @@
+\babel@toc {english}{}\relax 
+\contentsline {chapter}{Bảng ký hiệu và chữ viết tắt}{}{chapter*.2}%
+\contentsline {chapter}{\bfseries Lời mở đầu}{1}{chapter*.3}%
+\contentsline {chapter}{\numberline {1}Cơ sở lý thuyết}{3}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Giới thiệu về phân tích dữ liệu bóng đá}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Tổng quan về Kho dữ liệu (Data Warehouse) và Phân tích xử lý trực tuyến (OLAP)}{5}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Kho dữ liệu (Data Warehouse)}{5}{subsection.1.2.1}%
+\contentsline {subsubsection}{Khái niệm}{5}{section*.5}%
+\contentsline {subsubsection}{Tính chất}{5}{section*.6}%
+\contentsline {subsubsection}{Ưu điểm}{6}{section*.7}%
+\contentsline {subsubsection}{Nhược điểm}{6}{section*.8}%
+\contentsline {subsubsection}{Kiến trúc kho dữ liệu cơ bản}{7}{section*.9}%
+\contentsline {subsubsection}{Kiến trúc BI tổng thể}{7}{section*.10}%
+\contentsline {paragraph}{Các thành phần cốt lõi}{7}{section*.11}%
+\contentsline {paragraph}{Luồng dữ liệu và kiến trúc Hiện đại (ELT/Lakehouse)}{8}{section*.12}%
+\contentsline {subsection}{\numberline {1.2.2}Hệ thống phân tích xử lý trực tuyến (OLAP)}{9}{subsection.1.2.2}%
+\contentsline {subsubsection}{Định nghĩa và vai trò của hệ thống OLAP}{9}{section*.13}%
+\contentsline {subsubsection}{Phân biệt với hệ thống xử lý giao dịch trực tuyến (OLTP)}{10}{section*.14}%
+\contentsline {subsubsection}{Mô hình khối dữ liệu đa chiều}{10}{section*.15}%
+\contentsline {subsubsection}{Thành phần khối dữ liệu}{10}{section*.17}%
+\contentsline {subsubsection}{Các phép toán phân tích OLAP}{11}{section*.18}%
+\contentsline {section}{\numberline {1.3}Quy trình tích hợp dữ liệu ETL và ELT}{12}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}Kiến trúc ETL Kinh điển}{12}{subsection.1.3.1}%
+\contentsline {subsubsection}{Giai đoạn E - Trích xuất (Extract)}{12}{section*.20}%
+\contentsline {subsubsection}{Giai đoạn T - Biến đổi (Transform)}{13}{section*.21}%
+\contentsline {subsubsection}{Giai đoạn L - Tải (Load)}{13}{section*.22}%
+\contentsline {subsection}{\numberline {1.3.2}Sự chuyển dịch sang kiến trúc ELT hiện đại}{14}{subsection.1.3.2}%
+\contentsline {subsubsection}{Kiến trúc ELT (Extract, Load, Transform)}{14}{section*.23}%
+\contentsline {subsubsection}{Ưu điểm của các nền tảng đám mây trong ELT}{14}{section*.24}%
+\contentsline {chapter}{\numberline {2}Khảo sát hệ thống}{15}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Khảo sát nhu cầu của các bên liên quan}{15}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Nhu cầu của các bên liên quan}{15}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Các báo cáo cần xây dựng và chủ điểm phân tích}{17}{subsection.2.1.2}%
+\contentsline {section}{\numberline {2.2}Các luồng nghiệp vụ khai thác dữ liệu bóng đá}{20}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Luồng nghiệp vụ phân tích đối thủ}{20}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Luồng nghiệp vụ phân tích hiệu suất đội nhà}{22}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Luồng nghiệp vụ tuyển trạch cầu thủ}{24}{subsection.2.2.3}%
+\contentsline {section}{\numberline {2.3}Mô hình kinh doanh và Luồng dữ liệu}{26}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Mô hình kinh doanh}{26}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Luồng dữ liệu}{28}{subsection.2.3.2}%
+\contentsline {section}{\numberline {2.4}Đặc tả yêu cầu kỹ thuật}{29}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Yêu cầu về quy trình xử lý dữ liệu}{29}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Tiêu chuẩn chất lượng và hiệu năng}{29}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Công nghệ sử dụng}{30}{subsection.2.4.3}%
+\contentsline {section}{\numberline {2.5}Đặc điểm và quy mô dữ liệu}{30}{section.2.5}%
+\contentsline {chapter}{\numberline {3}Thiết kế hệ thống}{32}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Khám phá dữ liệu}{32}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Tổng quan về cấu trúc dữ liệu}{32}{subsection.3.1.1}%
+\contentsline {subsection}{\numberline {3.1.2}Cấu trúc schema}{32}{subsection.3.1.2}%
+\contentsline {subsubsection}{Bảng Matches (Trận đấu)}{33}{section*.32}%
+\contentsline {subsubsection}{Bảng Events (Sự kiện)}{33}{section*.34}%
+\contentsline {subsubsection}{Bảng Lineups (Đội hình)}{34}{section*.36}%
+\contentsline {subsection}{\numberline {3.1.3}Chất lượng dữ liệu}{34}{subsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.1.4}Khám phá dữ liệu}{34}{subsection.3.1.4}%
+\contentsline {subsubsection}{Tổng quan sự kiện trận đấu}{35}{section*.39}%
+\contentsline {subsubsection}{Phân tích không gian}{35}{section*.41}%
+\contentsline {subsubsection}{Phân phối kỹ thuật cầu thủ}{36}{section*.43}%
+\contentsline {subsubsection}{Kiểm chứng chỉ số nâng cao}{37}{section*.45}%
+\contentsline {section}{\numberline {3.2}Kiến trúc Data Warehouse}{37}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Đường ống dữ liệu}{38}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Hệ thống chiều khái niệm}{39}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Mô hình dữ liệu logic}{43}{section.3.5}%
+\contentsline {section}{\numberline {3.6}Mô hình dữ liệu vật lý}{43}{section.3.6}%
+\contentsline {chapter}{\numberline {4}Cài đặt hệ thống}{49}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Quá trình xử lý dữ liệu}{49}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Cấu hình môi trường và kết nối dữ liệu}{49}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Xử lý dữ liệu cho các bảng Dim}{49}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Xử lý dữ liệu cho các bảng Fact}{51}{subsection.4.1.3}%
+\contentsline {subsubsection}{Chuẩn hóa dữ liệu sự kiện}{51}{section*.67}%
+\contentsline {subsubsection}{Sử dụng Broadcast Join để tối ưu hiệu năng}{52}{section*.68}%
+\contentsline {subsubsection}{Chuẩn hóa dữ liệu thống kê tổng hợp}{52}{section*.69}%
+\contentsline {section}{\numberline {4.2}Tự động hóa quy trình xử lý với Apache Airflow}{54}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Thiết kế luồng dữ liệu}{54}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Cấu hình kỹ thuật và Giám sát}{56}{subsection.4.2.2}%
+\contentsline {section}{\numberline {4.3}Xây dựng báo cáo phân tích}{57}{section.4.3}%
+\contentsline {chapter}{Kết luận}{59}{chapter*.77}%
+\contentsline {section}{Tài liệu tham khảo}{61}{section*.80}%
+\contentsfinish 

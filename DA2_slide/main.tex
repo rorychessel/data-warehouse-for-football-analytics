@@ -1,0 +1,25 @@
+\input{SetUp}
+
+\begin{document}
+	\mode<all>
+
+	\begin{frame}[plain,t]
+		\titlepage
+	\end{frame}
+
+	\begin{frame}{Nội dung chính}
+		\mode<article>{\newpage}
+		\begin{columns}[onlytextwidth,t]
+		\column{0.5\textwidth}
+		\tableofcontents[sections = 1-3]
+		\column{0.5\textwidth}
+		\tableofcontents[sections = 4-7]
+		\end{columns}
+	\end{frame}
+	\setbeamertemplate{itemize item}{\large\textbullet}
+
+
+%% GÕ BUỔI NÀO MNG BỎ % BUỔI ĐÓ, KO DÙNG THÌ CMT LẠI VÀO NHÉ
+% \input{ptt}
+	\input{npv_slide}
+\end{document}

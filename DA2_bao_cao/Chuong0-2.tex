@@ -1,0 +1,209 @@
+\section{Tổng quan về Kho dữ liệu (Data Warehouse) và Phân tích xử lý trực tuyến (OLAP)}
+
+\subsection{Kho dữ liệu (Data Warehouse)}
+
+\subsubsection{Khái niệm}
+Kho dữ liệu (Data Warehouse - DW) là một cơ sở dữ liệu lớn, tập trung, lưu trữ dữ liệu lịch sử từ nhiều nguồn khác nhau đã được tích hợp và cấu trúc hóa riêng biệt cho mục đích phân tích. Khái niệm này phân biệt rõ ràng DW với các hệ thống tác nghiệp (Online Transaction Processing - OLTP):
+\begin{itemize}
+	\item \textbf{Mục tiêu}: Trong khi các hệ thống OLTP được tối ưu cho việc vận hành kinh doanh hàng ngày (xử lý các giao dịch nhỏ, nhanh), DW được tối ưu cho việc phân tích và ra quyết định (Online Analytical Processing - OLAP).
+	
+	\item \textbf{Chức năng}: DW hoạt động như trái tim của kinh doanh thông minh (Business Intelligence - BI). Nó giúp hợp nhất dữ liệu từ nhiều nguồn, đảm bảo tính nhất quán và cung cấp cái nhìn toàn cảnh.
+	
+	\item \textbf{Triết lý thiết kế}: DW thường sử dụng mô hình phi chuẩn hóa, phổ biến nhất là mô hình đa chiều (Dimensional Model), như lược đồ sao (Star Schema). Triết lý này ưu tiên tốc độ truy vấn phân tích bằng cách giảm số lượng phép JOIN, vốn là vấn đề của các cơ sở dữ liệu chuẩn hóa cao (3NF) trong OLTP.
+\end{itemize}
+
+\subsubsection{Tính chất}
+\begin{itemize}
+	\item \textbf{Hướng chủ đề}: Dữ liệu trong DW được tổ chức xoay quanh các chủ đề kinh doanh chính thay vì theo các quy trình nghiệp vụ của từng phòng ban như hệ thống OLTP, giúp cung cấp một cái nhìn toàn diện về một chủ đề cụ thể, hợp nhất dữ liệu liên quan từ nhiều hệ thống nguồn khác nhau.
+	
+	\item \textbf{Tích hợp}: Dữ liệu từ các nguồn khác nhau phải được tổng hợp và nhất quán hóa. Sự tích hợp này thể hiện ở việc áp dụng các quy ước đặt tên chung, đơn vị đo lường thống nhất và định dạng dữ liệu chuẩn trên toàn bộ kho dữ liệu.
+	
+	\item \textbf{Bất biến}: Khi có sự thay đổi dữ liệu trong hệ thống nguồn (ví dụ: khách hàng đổi địa chỉ), DW không ghi đè mà sẽ thêm một bản ghi mới để ghi nhận sự thay đổi theo thời gian.
+	
+	\item \textbf{Tính thời gian}: Mọi dữ liệu trong DW đều được gắn với một yếu tố thời gian. Kiến trúc của DW luôn được thiết kế để cho phép phân tích theo dòng thời gian (ví dụ: so sánh doanh thu quý này so với cùng kỳ năm ngoái), trong khi hệ thống OLTP thường chỉ quan tâm đến trạng thái hiện tại.
+\end{itemize}
+
+\subsubsection{Ưu điểm}
+\begin{itemize}
+	\item \textbf{Hỗ trợ ra quyết định chiến lược}: DW/BI là công cụ mạnh mẽ thúc đẩy chuyển đổi dữ liệu thô thành trí tuệ để dẫn dắt chiến lược. Nó hỗ trợ ra quyết định ở cả ba cấp độ: chiến lược, chiến thuật và tác nghiệp.
+	
+	\item \textbf{Tính nhất quán, độ tin cậy}: DW giúp đảm bảo tính đúng đắn của dữ liệu.
+	
+	\item \textbf{Phân tích lịch sử}: Khả năng lưu trữ dữ liệu lịch sử chi tiết cho phép phân tích xu hướng dài hạn.
+	
+	\item \textbf{Hiệu năng phân tích cao}: Thiết kế theo mô hình đa chiều (phi chuẩn hóa) giúp tăng tốc độ truy vấn, giảm các phép JOIN khi tổng hợp dữ liệu.
+	
+	\item \textbf{Nền tảng cho Machine Learning/AI}: Dữ liệu sạch, tích hợp và có tính lịch sử giúp giảm thời gian chuẩn bị dữ liệu cho các mô hình học máy.
+\end{itemize}
+
+\subsubsection{Nhược điểm}
+\begin{itemize}
+	\item \textbf{Độ trễ dữ liệu}: Dữ liệu trong DW thường được cập nhật theo lô, dẫn đến độ trễ nhất định so với dữ liệu thời gian thực.
+	
+	\item \textbf{Chi phí và thời gian triển khai ban đầu}: Việc xây dựng một DW truyền thống đòi hỏi chi phí đầu tư ban đầu lớn cho cơ sở hạ tầng, phần mềm, nhân lực và hỗ trợ kỹ thuật, có thể mất nhiều thời gian để thấy được giá trị.
+	
+	\item \textbf{Khả năng xử lý dữ liệu phi cấu trúc}: DW truyền thống gặp khó khăn khi xử lý dữ liệu bán cấu trúc và phi cấu trúc.
+	
+	\item \textbf{Tính cứng nhắc}: Mô hình phải được định nghĩa trước khi dữ liệu được nạp vào. Việc thay đổi cấu trúc DW sau này có thể phức tạp và tốn kém.
+\end{itemize}
+
+\subsubsection{Kiến trúc kho dữ liệu cơ bản}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}
+	\hline
+	\textbf{Mô hình kiến trúc} & \textbf{Đặc điểm chính} & \textbf{Hạn chế} \\
+	\hline
+	\textbf{Một tầng} & Hoạt động như một hệ thống ảo hoặc lớp trung gian để tổng hợp dữ liệu, nhằm giảm thiểu sự dư thừa dữ liệu trong quá trình lưu trữ. & Ít được sử dụng vì hạn chế về khả năng mở rộng và tích hợp dữ liệu, bao gồm việc hợp nhất dữ liệu và loại bỏ trùng lặp. \\
+	\hline
+	\textbf{Hai tầng} & Gồm Nguồn dữ liệu, Vùng đệm, Lớp kho dữ liệu (lưu trữ dữ liệu đã xử lý, Data Marts, Metadata), và Lớp phân tích/báo cáo. & Đơn giản hơn, nhưng khả năng tích hợp dữ liệu có thể chưa tối ưu. \\
+	\hline
+	\textbf{Ba tầng} & Mô hình phổ biến nhất, đặc biệt trong các doanh nghiệp lớn. Gồm 3 lớp: \newline 1. Lớp nguồn dữ liệu. \newline 2. Lớp xử lý trung gian. \newline 3. Lớp kho dữ liệu. & Đòi hỏi không gian lưu trữ lớn cho lớp xử lý trung gian và có thể gặp hạn chế trong việc phân tích dữ liệu theo thời gian thực. \\
+	\hline
+\end{tabular}
+
+\subsubsection{Kiến trúc BI tổng thể}
+
+\paragraph{Các thành phần cốt lõi}
+
+\begin{enumerate}
+	\item \textbf{Tầng nguồn và tích hợp dữ liệu}:
+	\begin{itemize}
+		\item \textbf{Nguồn dữ liệu (Data Sources)}: Là điểm khởi đầu, bao gồm các hệ thống tác nghiệp (OLTP), hoặc các nguồn bên ngoài (file Excel, dữ liệu mạng xã hội). Tầng này có thể chứa nhiều loại dữ liệu: có cấu trúc, bán cấu trúc (JSON, XML), và phi cấu trúc (video, log server).
+		
+		\item \textbf{Vùng đệm (Staging Area)}: Là khu vực lưu trữ trung gian.
+		\begin{itemize}
+			\item \textbf{Vai trò}: Dữ liệu thô sau khi trích xuất (Extract) sẽ được đưa vào đây. Mọi quá trình biến đổi (Transform) như làm sạch, chuẩn hóa, kết hợp và định hình lại dữ liệu sẽ diễn ra tại đây.
+			
+			\item \textbf{Mục đích}: Cách ly quá trình xử lý nặng khỏi hệ thống nguồn để không làm chậm hệ thống tác nghiệp.
+		\end{itemize}
+	\end{itemize}
+	
+	\item \textbf{Tầng lưu trữ (Storage Layer)}: Nơi dữ liệu đã được xử lý và tích hợp được lưu trữ.
+	\begin{itemize}
+		\item \textbf{Kho dữ liệu doanh nghiệp (Enterprise Data Warehouse - EDW)}:
+		\begin{itemize}
+			\item Là một cơ sở dữ liệu tập trung, lớn, lưu trữ dữ liệu lịch sử đã được tích hợp và cấu trúc hóa cho mục đích phân tích.
+		\end{itemize}
+		
+		\item \textbf{Kho dữ liệu chủ đề (Data Marts)}:
+		\begin{itemize}
+			\item Là các tập con nhỏ hơn, chuyên biệt, trích xuất từ kho dữ liệu doanh nghiệp hoặc được xây dựng riêng.
+			\item Được thiết kế để phục vụ nhu cầu phân tích của một phòng ban hoặc lĩnh vực nghiệp vụ cụ thể.
+		\end{itemize}
+		
+		\item \textbf{Kho siêu dữ liệu (Metadata Repository)}: Nơi lưu trữ thông tin về nguồn gốc, cấu trúc bảng, các phép biến đổi, và cách truy cập dữ liệu.
+	\end{itemize}
+	
+	\item \textbf{Tầng phân tích và trình bày (Analytics and Presentation Layer)}: Nơi dữ liệu được chuyển hóa thành tri thức và giao tiếp đến người dùng cuối.
+	\begin{itemize}
+		\item \textbf{Khối OLAP}: Tầng xử lý các truy vấn phức tạp trên dữ liệu, thường sử dụng các kỹ thuật OLAP, cho phép người dùng thực hiện các thao tác phân tích như Drill-Down, Roll-Up, Slice, Dice và Pivot.
+		
+		\item \textbf{Lớp ngữ nghĩa}: Một lớp trừu tượng ánh xạ cấu trúc bảng, cột sang các thuật ngữ kinh doanh dễ hiểu (ví dụ: "doanh thu", "lợi nhuận").
+		
+		\item \textbf{Công cụ BI và Báo cáo}: Giao diện người dùng cuối tương tác, bao gồm các báo cáo (Reports) và dashboard tương tác.
+	\end{itemize}
+\end{enumerate}
+
+\paragraph{Luồng dữ liệu và kiến trúc Hiện đại (ELT/Lakehouse)}
+\begin{itemize}
+	\item \textbf{Quy trình ETL/ELT}: ETL (Extract, Transform, Load) là quy trình nơi biến đổi dữ liệu diễn ra ở máy chủ trung gian. ELT (Extract, Load, Transform) là mô hình hiện đại hơn, nơi dữ liệu thô được tải vào kho dữ liệu đám mây trước, sau đó dùng sức mạnh xử lý của chính kho dữ liệu để biến đổi.
+	
+	\item \textbf{Sự kết hợp Data Lake}: Một kiến trúc hiện đại thường bao gồm Hồ dữ liệu (Data Lake), nơi lưu trữ mọi loại dữ liệu ở định dạng thô.
+	
+	\item \textbf{Kiến trúc Lakehouse}: Là sự hợp nhất của Data Lake và Data Warehouse, nhằm phá bỏ sự phức tạp và dư thừa của kiến trúc hai tầng truyền thống. Data Lakehouse cung cấp một nền tảng duy nhất để phục vụ cho cả phân tích kinh doanh (BI) và khoa học dữ liệu (Machine Learning/AI).
+\end{itemize}
+
+\subsection{Hệ thống phân tích xử lý trực tuyến (OLAP)}
+Trong kiến trúc kho dữ liệu, OLAP là thành phần chủ đạo của tầng phân tích và trình bày. OLAP là cơ chế chuyển hóa dữ liệu lịch sử đã được tích hợp thành tri thức có thể hành động được.
+
+\subsubsection{Định nghĩa và vai trò của hệ thống OLAP}
+OLAP (Online Analytical Processing) là một giải pháp phân tích dữ liệu mạnh mẽ, được thiết kế để xử lý và khai thác thông tin từ nhiều góc độ khác nhau với hiệu suất cao, ngay cả khi làm việc với khối lượng dữ liệu khổng lồ. Các hệ thống OLAP được sinh ra để giải quyết những câu hỏi phân tích phức tạp, hỗ trợ các truy vấn trên một khối lượng lớn dữ liệu lịch sử.
+
+Vai trò cốt lõi của OLAP bao gồm:
+\begin{itemize}
+	\item \textbf{Hỗ trợ phân tích và ra quyết định}: Hệ thống giúp tổ chức đưa ra các quyết định kinh doanh tốt hơn.
+	
+	\item \textbf{Phân tích đa chiều}: Cung cấp khả năng "nhìn" dữ liệu từ nhiều góc độ khác nhau (đa chiều) để tìm ra xu hướng, mẫu và tri thức ẩn.
+	
+	\item \textbf{Hỗ trợ dự báo và lập kế hoạch}: Giúp doanh nghiệp xây dựng các kế hoạch chiến lược và dự báo các kịch bản trong tương lai.
+	
+	\item \textbf{Tối ưu hóa hoạt động}: Giúp nhận diện các vấn đề cần cải thiện trong quy trình kinh doanh, từ đó tăng hiệu quả vận hành.
+	
+	\item \textbf{Người dùng}: Nhà phân tích dữ liệu, nhà quản lý, lãnh đạo cấp cao, v.v.
+\end{itemize}
+
+\subsubsection{Phân biệt với hệ thống xử lý giao dịch trực tuyến (OLTP)}
+\begin{itemize}
+	\item \textbf{Thiết kế cơ sở dữ liệu}: OLAP sử dụng mô hình dữ liệu phi chuẩn hóa, như lược đồ sao (Star Schema), để giảm số lượng phép JOIN và tăng tốc độ truy vấn phân tích. Ngược lại, OLTP yêu cầu chuẩn hóa cao (ví dụ: 3NF) để đảm bảo tính toàn vẹn dữ liệu.
+	
+	\item \textbf{Loại thao tác}: OLAP chủ yếu thực hiện các thao tác đọc và tổng hợp trên hàng triệu bản ghi. Các thao tác ghi (INSERT, UPDATE) rất hạn chế và thường diễn ra theo lô.
+\end{itemize}
+
+\subsubsection{Mô hình khối dữ liệu đa chiều}
+Khối OLAP (OLAP Cube) là một cấu trúc dữ liệu đa chiều được tối ưu hóa để truy vấn và phân tích nhanh, là hiện thực hóa của lớp ngữ nghĩa.
+\begin{itemize}
+	\item \textbf{Lớp ngữ nghĩa}: Là lớp trừu tượng nằm giữa người dùng và cơ sở dữ liệu. Nó chuyển đổi các cấu trúc bảng phức tạp thành các thuật ngữ kinh doanh dễ hiểu (ví dụ: "doanh thu", "lợi nhuận"). Điều này giải quyết vấn đề người dùng không quen thuộc với SQL hoặc cấu trúc bảng Fact/Dimension.
+	
+	\item \textbf{Tính toán trước}: Khối OLAP thường tính toán trước các giá trị tổng hợp ở nhiều cấp độ khác nhau để các truy vấn có thể được trả về gần như tức thời.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{pics/olap_cube.jpg}
+	\caption{Khối OLAP}
+	\label{olap_cube}
+\end{figure}
+
+\subsubsection{Thành phần khối dữ liệu}
+Khối dữ liệu OLAP được xây dựng dựa trên lược đồ sao, bao gồm hai thành phần chính:
+\begin{enumerate}
+	\item \textbf{Chỉ số đo lường (Measures)}:
+	\begin{itemize}
+		\item Là các cột Fact trong Bảng Fact.
+		
+		\item Đây là các giá trị số mà ta muốn đo đếm và phân tích.
+	\end{itemize}
+
+	\item \textbf{Các chiều (Dimensions)}:
+	\begin{itemize}
+		\item Là các bảng Dimension.
+		
+		\item Chúng trở thành các trục dùng để phân tích Measures, cung cấp bối cảnh cho các con số.
+		
+		\item Các thuộc tính phân cấp (ví dụ: Năm, Quý, Tháng) tạo thành các hệ thống phân cấp (Hierarchies) bên trong chiều.
+	\end{itemize}
+\end{enumerate}
+
+\subsubsection{Các phép toán phân tích OLAP}
+\begin{enumerate}
+	\item \textbf{Drill-Down (Đào sâu)}:
+	\begin{itemize}
+		\item Điều hướng từ một cấp độ cao hơn xuống một cấp độ thấp hơn trong hệ thống phân cấp (ví dụ: từ xem Doanh thu theo Năm xuống theo Quý).
+	\end{itemize}
+
+	\item \textbf{Roll-Up (Tổng hợp)}:
+	\begin{itemize}
+		\item Tổng hợp dữ liệu từ một cấp độ chi tiết lên một cấp độ tổng quan hơn (ví dụ: từ xem theo Thành phố, lên xem theo Vùng).
+	\end{itemize}
+
+	\item \textbf{Slice (Cắt lát)}:
+	\begin{itemize}
+		\item Lọc dữ liệu theo một chiều, chọn một giá trị duy nhất cho một chiều để xem một "lát cắt" của khối dữ liệu (ví dụ: bộ lọc chỉ xem một khu vực).
+	\end{itemize}
+
+	\item \textbf{Dice (Cắt khối)}:
+	\begin{itemize}
+		\item Lọc dữ liệu theo nhiều chiều, chọn các giá trị cụ thể trên hai hoặc nhiều chiều khác nhau để xem một "khối con" của dữ liệu (ví dụ: xem doanh thu của ngành hàng "Thời trang Nữ" tại "TP.HCM" trong "Quý 4").
+	\end{itemize}
+
+	\item \textbf{Pivot (Xoay)}:
+	\begin{itemize}
+		\item Thay đổi cách dữ liệu được hiển thị mà không thay đổi giá trị của dữ liệu. Nó cho phép hoán đổi vị trí của các chiều giữa trục hàng và trục cột (ví dụ: thay vì xem doanh thu theo sản phẩm ở hàng và khu vực ở cột, người dùng chuyển sang khu vực ở hàng và sản phẩm ở cột).
+	\end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{pics/phep_toan_olap_cube.png}
+	\caption{Các phép toán trên khối OLAP}
+	\label{phep_toan_olap_cube}
+\end{figure}

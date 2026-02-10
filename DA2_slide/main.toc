@@ -1,0 +1,13 @@
+\beamer@sectionintoc {1}{Cơ sở lý thuyết}{3}{0}{1}
+\beamer@sectionintoc {2}{Khảo sát hệ thống}{7}{0}{2}
+\beamer@subsectionintoc {2}{1}{Nhu cầu của các bên liên quan}{8}{0}{2}
+\beamer@subsectionintoc {2}{2}{Đặc điểm và quy mô dữ liệu}{9}{0}{2}
+\beamer@sectionintoc {3}{Thiết kế hệ thống}{10}{0}{3}
+\beamer@subsectionintoc {3}{1}{Khám phá dữ liệu}{11}{0}{3}
+\beamer@subsectionintoc {3}{2}{Thiết kế hệ thống}{16}{0}{3}
+\beamer@sectionintoc {4}{Cài đặt hệ thống}{29}{0}{4}
+\beamer@subsectionintoc {4}{1}{Quá trình xử lý dữ liệu}{30}{0}{4}
+\beamer@subsectionintoc {4}{2}{Tự động hóa quy trình xử lý với Apache Airflow}{40}{0}{4}
+\beamer@subsectionintoc {4}{3}{Xây dựng báo cáo phân tích}{41}{0}{4}
+\beamer@sectionintoc {5}{Kết luận và Hướng phát triển}{45}{0}{5}
+\beamer@sectionintoc {6}{Tài liệu tham khảo}{47}{0}{6}

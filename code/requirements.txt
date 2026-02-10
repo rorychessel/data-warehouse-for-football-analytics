@@ -1,0 +1,7 @@
+apache-airflow==2.9.1
+apache-airflow-providers-apache-spark
+apache-airflow-providers-postgres
+apache-airflow-providers-amazon
+pyspark==3.5.3
+requests
+kaggle

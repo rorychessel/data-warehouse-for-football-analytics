@@ -1,0 +1,109 @@
+\section{Các luồng nghiệp vụ khai thác dữ liệu bóng đá}
+
+\subsection{Luồng nghiệp vụ phân tích đối thủ}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{pics/business_flow_1.png}
+	\caption{Luồng nghiệp vụ phân tích đối thủ}
+	\label{business_flow_1}
+\end{figure}
+
+\begin{enumerate}
+	\item \textbf{Mục tiêu}: Thu thập, tổng hợp và phân tích dữ liệu về các đối thủ sắp tới nhằm phân tích chiến thuật, điểm mạnh, điểm yếu và các nhân sự chủ chốt. Kết quả của nghiệp vụ này là các báo cáo phục vụ cho Ban huấn luyện trong việc xây dựng chiến lược và kế hoạch chuẩn bị cho trận đấu.
+	
+	\item \textbf{Các bên liên quan}
+	\begin{itemize}
+		\item \textbf{Ban huấn luyện}: Đưa ra yêu cầu phân tích và sử dụng các báo cáo để ra quyết định về chiến thuật, nhân sự và phương án thi đấu.
+		
+		\item \textbf{Nhà phân tích}: Sử dụng các công cụ để khai thác thông tin và chuyển hóa dữ liệu thô thành các báo cáo.
+		
+		\item \textbf{Kho dữ liệu}: Nguồn cung cấp dữ liệu tập trung, chứa thông tin về các trận đấu, cầu thủ, đội bóng,...
+	\end{itemize}
+	
+	\item \textbf{Mô tả quy trình}
+	
+	\textbf{Bước 1: Khởi tạo yêu cầu}: Khi có lịch thi đấu, Ban huấn luyện sẽ gửi yêu cầu cho Nhà phân tích để bắt đầu tìm hiểu về đối thủ cụ thể.
+		
+	\textbf{Bước 2: Xác định phạm vi và thu thập dữ liệu}: Nhà phân tích làm việc với Ban huấn luyện để xác định phạm vi cần phân tích, dựa vào đó để thực hiện truy vấn và trích xuất dữ liệu thô cần thiết từ Kho dữ liệu.
+		
+	\textbf{Bước 3: Tổng hợp, xử lý và phân tích}: Dữ liệu thô được trích xuất sẽ được làm sạch, chuẩn hóa và tổng hợp. Nhà phân tích phân tích các xu hướng trong lối chơi, hiệu suất cầu thủ và điểm mạnh/yếu của đối thủ.
+		
+	\textbf{Bước 4: Tạo và trình bày báo cáo}: Kết quả phân tích được trình bày dưới dạng một báo cáo hoàn chỉnh, bao gồm các số liệu, biểu đồ trực quan và nhận định chuyên môn, sau đó được gửi đến cho Ban huấn luyện.
+		
+	\textbf{Bước 5: Phản hồi và hiệu chỉnh}: Ban huấn luyện xem xét báo cáo. Nếu chưa đạt, họ sẽ yêu cầu bổ sung. Quy trình quay lại bước 2 hoặc 3 để Nhà phân tích thực hiện phân tích sâu hơn và cập nhật lại báo cáo.
+		
+	\textbf{Bước 6: Hoàn tất và ứng dụng}: Khi báo cáo cuối cùng được phê duyệt, Ban huấn luyện sử dụng báo cáo để lên kế hoạch cho các buổi tập và xây dựng chiến thuật cho trận đấu. Nghiệp vụ kết thúc.
+\end{enumerate}
+
+\subsection{Luồng nghiệp vụ phân tích hiệu suất đội nhà}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{pics/business_flow_2.png}
+	\caption{Luồng nghiệp vụ phân tích hiệu suất đội nhà}
+	\label{business_flow_2}
+\end{figure}
+
+\begin{enumerate}
+	\item \textbf{Mục tiêu}: Đánh giá hiệu suất thi đấu của đội nhà sau mỗi trận đấu. Kết quả phân tích cung cấp dữ liệu khách quan để Ban huấn luyện điều chỉnh chiến thuật, giáo án tập luyện và chuẩn bị cho các trận đấu trong tương lai.
+	
+	\item \textbf{Các bên liên quan}
+	\begin{itemize}
+		\item \textbf{Ban huấn luyện}: Đưa ra các yêu cầu phân tích và áp dụng kết quả phân tích.
+		
+		\item \textbf{Nhà phân tích}: Thực hiện quy trình phân tích, trích xuất dữ liệu, xử lý, tìm kiếm thông tin và tạo các báo cáo.
+		
+		\item \textbf{Kho dữ liệu}: Tự động cập nhật, xử lý dữ liệu từ các trận đấu mới nhất và cung cấp nguồn dữ liệu sẵn sàng cho Nhà phân tích khai thác.
+	\end{itemize}
+	
+	\item \textbf{Mô tả quy trình}
+	
+	\textbf{Bước 1: Cập nhật dữ liệu sau trận đấu}: Sau khi một trận đấu kết thúc, Kho dữ liệu tự động cập nhật và xử lý dữ liệu liên quan.
+		
+	\textbf{Bước 2: Khởi tạo phân tích và thu thập dữ liệu}: Nhà phân tích tiếp nhận yêu cầu, xác định phạm vi phân tích ban đầu và tiến hành truy vấn, trích xuất dữ liệu hiệu suất chi tiết của đội nhà từ Kho dữ liệu.
+		
+	\textbf{Bước 3: Phân tích và tạo báo cáo}: Nhà phân tích tổng hợp dữ liệu, thực hiện so sánh các chỉ số, tìm ra những điểm tích cực, tiêu cực và các vấn đề tồn đọng, từ đó tạo ra báo cáo hiệu suất.
+		
+	\textbf{Bước 4: Trình bày và xem xét}: Báo cáo được trình bày cho Ban huấn luyện để đánh giá xem báo cáo đã đáp ứng yêu cầu chuyên môn chưa.
+		
+	\textbf{Bước 5: Phản hồi và hiệu chỉnh}: Nếu báo cáo chưa đạt, Ban huấn luyện sẽ yêu cầu bổ sung. Nhà phân tích điều chỉnh phạm vi, khai thác dữ liệu, cập nhật báo cáo. Quá trình lặp lại đến khi báo cáo đạt yêu cầu.
+		
+	\textbf{Bước 6: Hoàn tất và ứng dụng}: Khi báo cáo cuối cùng được phê duyệt, Ban huấn luyện sẽ tiếp nhận và sử dụng báo cáo để phục vụ cho công tác chuyên môn. Nghiệp vụ kết thúc.
+\end{enumerate}
+
+\subsection{Luồng nghiệp vụ tuyển trạch cầu thủ}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\linewidth]{pics/business_flow_3.png}
+	\caption{Luồng nghiệp vụ tuyển trạch cầu thủ}
+	\label{business_flow_3}
+\end{figure}
+
+\begin{enumerate}
+	\item \textbf{Mục tiêu}: Tìm kiếm và xác định các cầu thủ tiềm năng phù hợp đội bóng. Cung cấp cho Ban huấn luyện một danh sách các ứng viên đã qua sàng lọc, làm cơ sở cho các quyết định chuyển nhượng.
+	
+	\item \textbf{Các bên liên quan}
+	\begin{itemize}
+		\item \textbf{Ban huấn luyện}: Đưa ra nhu cầu chuyển nhượng và ra quyết định cuối cùng trong việc lựa chọn và đàm phán.
+		
+		\item \textbf{Bộ phận tuyển trạch}: Xây dựng tiêu chí lọc, phân tích dữ liệu, đánh giá chuyên môn và tạo báo cáo đề xuất các ứng viên tiềm năng.
+		
+		\item \textbf{Kho dữ liệu}: Cung cấp một cơ sở dữ liệu lớn về cầu thủ để sàng lọc, truy vấn theo các tiêu chí phức tạp do bộ phận tuyển trạch xây dựng.
+	\end{itemize}
+	
+	\item \textbf{Mô tả quy trình}
+	
+	\textbf{Bước 1: Xác định nhu cầu}: Ban huấn luyện xác định nhu cầu nhân sự và gửi yêu cầu đến Bộ phận tuyển trạch.
+		
+	\textbf{Bước 2: Xây dựng tiêu chí và sàng lọc}: Bộ phận tuyển trạch tiếp nhận yêu cầu và cụ thể hóa thành một bộ tiêu chí lọc, sau đó thực hiện truy vấn trên Kho dữ liệu để có được danh sách ứng viên sơ bộ.
+		
+	\textbf{Bước 3: Phân tích và tạo báo cáo đề xuất}: Bộ phận tuyển trạch tiến hành phân tích sâu danh sách ứng viên, đánh giá các chỉ số, so sánh các cầu thủ để tạo ra báo cáo đề xuất ban đầu.
+		
+	\textbf{Bước 4: Trình bày và xem xét}: Báo cáo được trình bày cho Ban huấn luyện để đánh giá mức độ phù hợp của các ứng viên được đề xuất.
+		
+	\textbf{Bước 5: Phản hồi và hiệu chỉnh}: Nếu báo cáo chưa phù hợp hoặc cần tìm kiếm thêm, bộ phận tuyển trạch cập nhật lại bộ lọc, thực hiện truy vấn mới và lặp lại quá trình phân tích để tổng hợp lại báo cáo mới.
+		
+	\textbf{Bước 6: Hoàn tất và lựa chọn}: Khi báo cáo cuối cùng đã đáp ứng được yêu cầu, Ban huấn luyện sẽ tiếp nhận, lựa chọn ứng viên phù hợp và bắt đầu quá trình đàm phán chuyển nhượng. Nghiệp vụ kết thúc.
+\end{enumerate}

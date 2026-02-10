@@ -1,0 +1,213 @@
+\section{Mô hình dữ liệu logic}
+
+Căn cứ vào quá trình khảo sát và phân tích, mô hình dữ liệu logic cho hệ thống kho dữ liệu có thể được minh họa cụ thể như sau:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/logic.png}
+	\caption{Mô hình dữ liệu logic}
+	\label{logic}
+\end{figure}
+
+\section{Mô hình dữ liệu vật lý}
+
+Từ hệ thống chiều khái niệm và mô hình dữ liệu logic đã xây dựng, mô hình dữ liệu vật lý được thiết kế nhằm hiện thực hóa cấu trúc dữ liệu trên hệ quản trị cơ sở dữ liệu PostgreSQL. Các bảng dữ liệu được xác định chi tiết về kiểu dữ liệu, khóa chính, khóa ngoại và các ràng buộc toàn vẹn, đảm bảo dữ liệu được lưu trữ nhất quán và hiệu quả. Đây là cơ sở để triển khai các quy trình ETL, xây dựng Data Mart và kết nối với các công cụ BI trong các bước tiếp theo.
+
+\begin{table}[H]
+	\centering
+	\vspace{0.3cm}
+	\begin{tabular}{|l|l|p{7cm}|}
+		\hline
+		\textbf{Tên cột} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa \& Diễn giải} \\
+		\hline
+		\multicolumn{3}{|c|}{\textbf{Bảng: dim\_player}} \\
+		\hline
+		player\_sk & Integer & Khóa thay thế (Surrogate Key) \\
+		player\_name & Varchar & Tên cầu thủ \\
+		effective\_from & Date & Ngày bắt đầu hiệu lực \\
+		effective\_to & Date & Ngày kết thúc (NULL nếu hiện tại) \\
+		is\_current & Boolean & Đánh dấu dòng dữ liệu mới nhất \\
+		\hline
+		\multicolumn{3}{|c|}{\textbf{Bảng: dim\_team}} \\
+		\hline
+		team\_sk & Integer & Khóa thay thế của đội bóng \\
+		team\_name & Varchar & Tên đội bóng \\
+		manager\_name & Varchar & Tên HLV trưởng tại thời điểm đó \\
+		home\_stadium & Varchar & Sân vận động nhà \\
+		\hline
+		\multicolumn{3}{|c|}{\textbf{Bảng: dim\_match}} \\
+		\hline
+		match\_sk & Integer & Khóa thay thế trận đấu \\
+		match\_date & Date & Ngày thi đấu \\
+		season & Varchar & Mùa giải (VD: 2020/2021) \\
+		competition & Varchar & Tên giải đấu \\
+		\hline
+		\multicolumn{3}{|c|}{\textbf{Bảng: dim\_location}} \\
+		\hline
+		location\_id & Integer & Khóa chính \\
+		field\_zone & Varchar & Tên khu vực (VD: Zone 14, Cánh trái) \\
+		is\_box & Boolean & Có nằm trong vòng cấm không \\
+		\hline
+	\end{tabular}
+	\caption{Đặc tả các bảng Dimension dùng chung}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.805\linewidth]{pics/3.8.1.png}
+	\caption{Mô hình dữ liệu vật lý của bảng fact\_event}
+	\label{3.8.1}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\vspace{0.3cm}
+	\begin{tabular}{|l|l|p{7cm}|}
+		\hline
+		\textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa} \\
+		\hline
+		event\_pk & Bigint & Khóa chính sự kiện \\
+		\hline
+		match\_sk & Integer & FK: Trận đấu \\
+		\hline
+		player\_sk & Integer & FK: Cầu thủ thực hiện \\
+		\hline
+		team\_sk & Integer & FK: Đội bóng thực hiện \\
+		\hline
+		location\_x & Numeric & Tọa độ X điểm bắt đầu (0-120) \\
+		\hline
+		location\_y & Numeric & Tọa độ Y điểm bắt đầu (0-80) \\
+		\hline
+		end\_location\_x & Numeric & Tọa độ X điểm đến (0-120)\\
+		\hline
+		end\_location\_y & Numeric & Tọa độ Y điểm đến (0-90) \\
+		\hline
+		location\_id & Integer & FK: Khu vực trên sân \\
+		\hline
+		event\_type\_sk & Integer & FK: Loại sự kiện \\
+		\hline
+		minute & Integer & Thời điểm diễn ra (Phút) \\
+		\hline
+		under\_pressure & Boolean & Có bị áp lực khi xử lý không \\
+		\hline
+	\end{tabular}
+	\caption{Cấu trúc bảng fact\_event (Sự kiện chi tiết)}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\linewidth]{pics/3.8.2.png}
+	\caption{Mô hình dữ liệu vật lý của bảng fact\_player\_match\_stats}
+	\label{3.8.2}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\vspace{0.3cm}
+	\begin{tabular}{|l|l|p{7cm}|}
+		\hline
+		\textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa} \\
+		\hline
+		stats\_sk & Integer & Khóa chính \\
+		\hline
+		player\_sk & Integer & FK: Cầu thủ \\
+		\hline
+		match\_sk & Integer & FK: Trận đấu \\
+		\hline
+		minutes\_played & Integer & Số phút thi đấu thực tế \\
+		\hline
+		total\_passes & Integer & Tổng số đường chuyền \\
+		\hline
+		accurate\_passes & Integer & Số đường chuyền chính xác \\
+		\hline
+		xg\_total & Numeric & Tổng xG (Bàn thắng kỳ vọng) \\
+		\hline
+		xa\_total & Numeric & Tổng xA (Kiến tạo kỳ vọng) \\
+		\hline
+		goals & Integer & Số bàn thắng ghi được \\
+		\hline
+		assists & Integer & Số kiến tạo thành bàn \\
+		\hline
+		tackles & Integer & Số lần tắc bóng thành công \\
+		\hline
+	\end{tabular}
+	\caption{Cấu trúc bảng fact\_player\_match\_stats}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/3.8.3.png}
+	\caption{Mô hình dữ liệu vật lý của bảng fact\_team\_match\_stats}
+	\label{3.8.3}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\vspace{0.3cm}
+	\begin{tabular}{|l|l|p{7cm}|}
+		\hline
+		\textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa} \\
+		\hline
+		team\_match\_sk & Integer & Khóa chính \\
+		\hline
+		team\_sk & Integer & FK: Đội bóng chủ thể \\
+		\hline
+		opponent\_team\_sk & Integer & FK: Đội đối thủ \\
+		\hline
+		match\_sk & Integer & FK: Trận đấu \\
+		\hline
+		possession\_pct & Numeric & Tỉ lệ kiểm soát bóng (\%) \\
+		\hline
+		ppda & Numeric & Chỉ số PPDA (Đo cường độ Pressing) \\
+		\hline
+		total\_xg & Numeric & Tổng xG của cả đội \\
+		\hline
+		goals\_scored & Integer & Bàn thắng ghi được \\
+		\hline
+		goals\_conceded & Integer & Bàn thua phải nhận \\
+		\hline
+		result & Varchar & Kết quả (Thắng/Hòa/Thua) \\
+		\hline
+	\end{tabular}
+	\caption{Cấu trúc bảng fact\_team\_match\_stats}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/3.8.4.png}
+	\caption{Mô hình dữ liệu vật lý của bảng fact\_player\_season\_stats}
+	\label{3.8.4}
+\end{figure}
+
+\begin{table}[H]
+	\centering
+	\vspace{0.3cm}
+	\begin{tabular}{|l|l|p{7cm}|}
+		\hline
+		\textbf{Trường} & \textbf{Kiểu dữ liệu} & \textbf{Ý nghĩa} \\
+		\hline
+		season\_stats\_sk & Integer & Khóa chính \\
+		\hline
+		player\_sk & Integer & FK: Cầu thủ \\
+		\hline
+		team\_sk & Integer & FK: Đội bóng \\
+		\hline
+		season & Varchar & Mùa giải\\
+		\hline
+		matches\_played & Integer & Số trận ra sân \\
+		\hline
+		starts & Integer & Số trận đá chính \\
+		\hline
+		goals & Integer & Tổng bàn thắng cả mùa \\
+		\hline
+		assists & Integer & Tổng kiến tạo cả mùa \\
+		\hline
+		yellow\_cards & Integer & Tổng số thẻ vàng \\
+		\hline
+		xg\_season & Numeric & Tổng xG tích lũy \\
+		\hline
+		xa\_season & Numeric & Tổng xA tích lũy \\
+		\hline
+	\end{tabular}
+	\caption{Cấu trúc bảng fact\_player\_season\_stats}
+\end{table}

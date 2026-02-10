@@ -1,0 +1,136 @@
+\section{Khám phá dữ liệu}
+
+\subsection{Tổng quan về cấu trúc dữ liệu}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{pics/3.1.1.png}
+	\caption{Tổng quan về cấu trúc các file dữ liệu dạng JSON}
+	\label{3.1.1}
+\end{figure}
+
+Quá trình khảo sát với Apache Spark cho thấy dữ liệu từ StatsBomb được tổ chức thành 3 nhóm đối tượng chính: Matches (Thông tin trận đấu), Lineups (Danh sách đăng ký thi đấu) và Events (Chi tiết sự kiện). Dữ liệu này được lưu trữ dưới dạng JSON lồng nhau thay vì dạng bảng phẳng truyền thống, phản ánh độ phức tạp cao của các tình huống trong bóng đá.
+
+\subsection{Cấu trúc schema}
+
+Khi đi sâu vào cấu trúc schema, có thể thấy dữ liệu không tồn tại độc lập mà có tính liên kết chặt chẽ. Các trường thông tin quan trọng như location (tọa độ), shot (cú sút) hay pass (đường chuyền) không phải là kiểu dữ liệu nguyên thủy mà là các cấu trúc phức tạp (Struct hoặc Array). Vì vậy, một dòng sự kiện đơn lẻ chứa hàng chục thông tin con cần được bóc tách kỹ lưỡng.
+
+\subsubsection{Bảng Matches (Trận đấu)}
+
+\begin{table}[H]
+	\centering
+	\label{tab:schema_matches}
+	\begin{tabular}{|l|l|p{9cm}|}
+		\hline
+		\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\ \hline
+		match\_id & Long & Khóa chính của trận đấu. \\ \hline
+		match\_date & String & Ngày diễn ra trận đấu (YYYY-MM-DD). \\ \hline
+		kick\_off & String & Thời gian bắt đầu trận đấu. \\ \hline
+		home\_team & Struct & Đội nhà (home\_team\_id, home\_team\_name,...). \\ \hline
+		away\_team & Struct & Đội khách (away\_team\_id, away\_team\_name,...). \\ \hline
+		home\_score & Long & Số bàn thắng của đội nhà. \\ \hline
+		away\_score & Long & Số bàn thắng của đội khách. \\ \hline
+		competition & Struct & Giải đấu (id, name, country\_name). \\ \hline
+		season & Struct & Mùa giải (season\_id, season\_name). \\ \hline
+	\end{tabular}
+	\caption{Tóm tắt cấu trúc dữ liệu bảng Matches}
+\end{table}
+
+\subsubsection{Bảng Events (Sự kiện)}
+
+\begin{table}[H]
+	\centering
+	\label{tab:schema_events}
+	\begin{tabular}{|l|l|p{9cm}|}
+		\hline
+		\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\ \hline
+		id & String & Khóa chính của sự kiện. \\ \hline
+		index & Long & Số thứ tự của sự kiện trong trận đấu. \\ \hline
+		timestamp & String & Thời điểm xảy ra sự kiện (phút:giây.miligiây). \\ \hline
+		type & Struct & Loại sự kiện (Pass, Shot,...). \\ \hline
+		possession\_team & Struct & Đội đang kiểm soát bóng tại thời điểm đó. \\ \hline
+		play\_pattern & Struct & Tình huống bóng (From Corner,...). \\ \hline
+		player & Struct & Thông tin cầu thủ thực hiện hành động (id, name). \\ \hline
+		location & Array$<$Double$>$ & Tọa độ trên sân dạng mảng $[x, y]$. \\ \hline
+		shot & Struct & Chi tiết cú sút: statsbomb\_xg, outcome, body\_part,... \\ \hline
+		pass & Struct & Chi tiết đường chuyền: length, angle, height,... \\ \hline
+		tactics & Struct & Thông tin đội hình chiến thuật và vị trí. \\ \hline
+	\end{tabular}
+	\caption{Tóm tắt cấu trúc dữ liệu bảng Events}
+\end{table}
+
+\subsubsection{Bảng Lineups (Đội hình)}
+
+\begin{table}[H]
+	\centering
+	\label{tab:schema_lineups}
+	\begin{tabular}{|l|l|p{9cm}|}
+		\hline
+		\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Mô tả} \\ \hline
+		team\_id & Long & ID của đội bóng. \\ \hline
+		team\_name & String & Tên đội bóng. \\ \hline
+		lineup & Array$<$Struct$>$ & Danh sách cầu thủ đăng ký thi đấu. Dữ liệu là một mảng chứa thông tin cầu thủ. \\ \hline
+		\textit{-- element} & \textit{Struct} & \textit{Thông tin chi tiết của cầu thủ trong mảng lineup:} \\ 
+		\hspace{0.5cm} .player\_id & Long & ID cầu thủ. \\ 
+		\hspace{0.5cm} .player\_name & String & Tên đầy đủ cầu thủ. \\ 
+		\hspace{0.5cm} .jersey\_number & Long & Số áo thi đấu. \\ 
+		\hspace{0.5cm} .country & Struct & Quốc tịch cầu thủ. \\ 
+		\hspace{0.5cm} .cards & Array & Danh sách thẻ phạt (nếu có). \\ \hline
+	\end{tabular}
+	\caption{Tóm tắt cấu trúc dữ liệu bảng Lineups}
+\end{table}
+
+\subsection{Chất lượng dữ liệu}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/3.1.3.png}
+	\caption{Chất lượng dữ liệu sự kiện}
+	\label{3.1.3}
+\end{figure}
+
+Phân tích trên tập dữ liệu đại diện (một trận El Clásico ở mùa giải 2017/2018) cho thấy chất lượng dữ liệu tương đối tốt nhưng vẫn tồn tại Null. Cụ thể, trường location xuất hiện các giá trị Null ở các sự kiện mang tính thủ tục (như tiếng còi bắt đầu hiệp đấu). Không phát hiện trùng lặp khóa chính (ID) trong mẫu thử.
+
+\subsection{Khám phá dữ liệu}
+
+Việc hiểu rõ đặc điểm dữ liệu trước khi đưa vào kho là bước quan trọng để định hình chiến lược phân tích. Dựa trên dữ liệu JSON từ StatsBomb, ta thực hiện phân tích trên 4 khía cạnh chính dưới đây.
+
+\subsubsection{Tổng quan sự kiện trận đấu}
+Dữ liệu sự kiện cho thấy sự phân bố không đồng đều giữa các loại hành động. Theo hình \ref{3.1.4 (1)}, các hành động mang tính kiểm soát như \textit{Pass} (Chuyền bóng) và \textit{Ball Receipt} (Nhận bóng) chiếm tỷ trọng áp đảo. Trong khi đó, các sự kiện mang tính quyết định trận đấu như \textit{Shot} hay \textit{Goal} là các sự kiện hiếm khi xảy ra. Điều này phản ánh đúng tính chất của bóng đá hiện đại và đặt ra yêu cầu xử lý mất cân bằng dữ liệu khi xây dựng các mô hình dự báo.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/3.1.4 (1).png}
+	\caption{Top 10 loại sự kiện phổ biến nhất trong một trận đấu mẫu}
+	\label{3.1.4 (1)}
+\end{figure}
+
+\subsubsection{Phân tích không gian}
+Tận dụng trường thông tin \textit{location} (tọa độ $[x, y]$) được trích xuất từ cấu trúc JSON lồng nhau, ta có thể xây dựng Bản đồ nhiệt (Heatmap) để quan sát mật độ di chuyển của cầu thủ (Hình \ref{3.1.4 (2)}). Việc trực quan hóa này chứng minh hệ thống đã xử lý thành công dữ liệu tọa độ thô, tạo tiền đề cho các bài toán phân tích chiến thuật và kiểm soát không gian ở các chương sau.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{pics/3.1.4 (2).png}
+	\caption{Bản đồ nhiệt (Heatmap) vị trí hoạt động trên sân}
+	\label{3.1.4 (2)}
+\end{figure}
+
+\subsubsection{Phân phối kỹ thuật cầu thủ}
+Biểu đồ Histogram (Hình \ref{3.1.4 (3)}) mô tả phân phối tỷ lệ chuyền bóng chính xác của các cầu thủ tại giải đấu. Biểu đồ có dạng lệch trái rõ rệt, với đa số cầu thủ duy trì tỷ lệ chuyền bóng thành công trên 75\%. Điều này cho thấy mặt bằng kỹ thuật tại giải đấu La Liga là rất cao, đòi hỏi hệ thống phân tích phải có độ nhạy lớn để phân loại được các cầu thủ xuất sắc.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{pics/3.1.4 (3).png}
+	\caption{Phân phối tỷ lệ chuyền bóng chính xác của cầu thủ}
+	\label{3.1.4 (3)}
+\end{figure}
+
+\subsubsection{Kiểm chứng chỉ số nâng cao}
+Để đánh giá độ tin cậy của các chỉ số hiện đại, ta có thể phân tích tương quan tuyến tính giữa \textit{Bàn thắng kỳ vọng (xG)} và \textit{Bàn thắng thực tế} (Hình \ref{3.1.4 (4)}). Kết quả cho thấy mối tương quan thuận chặt chẽ, các điểm dữ liệu phân bố bám sát đường chéo tham chiếu. Như vậy, $xG$ là một chỉ số dự báo đáng tin cậy cho hiệu suất ghi bàn và được sử dụng làm một trong những chỉ số Fact chính trong Kho dữ liệu.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\linewidth]{pics/3.1.4 (4).png}
+	\caption{Tương quan giữa Bàn thắng kỳ vọng (xG) và Bàn thắng thực tế}
+	\label{3.1.4 (4)}
+\end{figure}

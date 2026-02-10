@@ -1,0 +1,23 @@
+\section{Đặc điểm và quy mô dữ liệu}
+Nguồn dữ liệu từ GitHub của StatsBomb là nền tảng cho Data Warehouse.
+
+\begin{itemize}
+	\item \textbf{Đặc điểm:}
+	\begin{itemize}
+		\item \textbf{Định dạng:} JSON bán cấu trúc.
+		\item \textbf{Cấu trúc:} Phức tạp, lồng nhau nhiều cấp. Một bản ghi sự kiện chứa nhiều object con như \texttt{tactics.lineup}, \texttt{shot.freeze\_frame} (vị trí 22 cầu thủ), \texttt{location[x,y]}.
+	\end{itemize}
+	
+	\item \textbf{Quy mô:}
+	\begin{itemize}
+		\item \textbf{Số lượng bản ghi:} Khoảng \textbf{2.000.000 -- 3.000.000} sự kiện. Trung bình một trận đấu chứa khoảng 3.500 sự kiện.
+		\item \textbf{Dung lượng lưu trữ:} Khoảng \textbf{1.5 GB -- 2.0 GB} dữ liệu thô (JSON).
+	\end{itemize}
+	
+	\item \textbf{Thách thức kỹ thuật:}
+	\begin{itemize}
+		\item Tuy dung lượng lưu trữ không quá lớn nhưng độ phức tạp của cấu trúc JSON yêu cầu tài nguyên tính toán lớn để thực hiện quá trình làm phẳng. Đây là lý do chính cho việc sử dụng \textbf{Apache Spark}.
+	\end{itemize}
+\end{itemize}
+
+\textbf{Ghi chú:} Dữ liệu sử dụng trong đồ án được lấy từ \textbf{StatsBomb Free dataset} cho câu lạc bộ \textbf{FC Barcelona} thuộc giải đấu La Liga. Do giới hạn dữ liệu mở, đề tài chọn Barcelona làm \textit{case study} để minh hoạ quy trình xây dựng kho dữ liệu và báo cáo phân tích.

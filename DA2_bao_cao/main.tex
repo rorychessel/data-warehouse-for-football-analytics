@@ -1,0 +1,628 @@
+\documentclass[oneside,12pt,a4paper]{book}
+% \usepackage[utf8]{vietnam} % Sử dụng tiếng việt
+\usepackage[top=2cm, bottom=2cm, left=3.5cm, right=2cm]{geometry}
+\usepackage{amsmath,amssymb,latexsym,amscd,amsxtra,graphicx,graphpap,amsthm}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{rotating}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{cases} 
+\usepackage{makeidx}
+\usepackage{csquotes}
+\usepackage{tikz}
+\usetikzlibrary{mindmap}
+\usepackage{booktabs}   % <-- Bắt buộc để dùng \toprule, \midrule
+\usepackage{longtable}  % <-- Bắt buộc để tạo bảng dài
+
+\makeindex 
+
+\graphicspath{ {figures/} }
+\usepackage{array}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pdflscape}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{minted}
+\usepackage[backend=biber, sorting=none]{biblatex} % Chú ý backend biber
+\usepackage[vietnamese, english]{babel}
+\addbibresource{reference.bib}
+\DefineBibliographyStrings{english}{%
+  andothers = {et al.},
+}
+
+% \DefineBibliographyStrings{vietnamese}{%
+%   andothers = {và cộng sự},
+% }
+% Tùy chỉnh kiểu trích dẫn để loại bỏ từ "in" và "pages"
+\DeclareFieldFormat{journaltitle}{#1}
+\DeclareFieldFormat[article]{title}{#1}
+\DeclareFieldFormat[article]{pages}{#1}
+\DeclareFieldFormat{url}{\newline\url{#1}} % Đặt URL xuống dòng mới
+\DeclareFieldFormat{urldate}{#1}
+\DeclareFieldFormat{year}{#1}
+\renewbibmacro{in:}{}
+\renewcommand{\bibpagespunct}{\ifentrytype{article}{\addspace}{\addcomma\space}}
+ \renewcommand{\bibfont}{\large}
+% Tùy chỉnh hiển thị năm mà không lặp lại
+\renewbibmacro*{journal+issuetitle}{%
+  \usebibmacro{journal}%
+  \setunit*{\addcomma\space}%
+  \printfield{volume}%
+  \printfield{number}%
+  \setunit*{\addcomma\space}%
+  \printfield{year}%
+  \newunit}
+
+
+%\usetikzlibrary{patterns}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+\lstset{style=mystyle}
+\usepackage{mathtools}
+%\usepackage{pb-diagram}
+\usepackage{indentfirst}
+\usepackage{caption}
+\usepackage{aligned-overset}
+\usepackage{picinpar,floatflt}
+\usepackage{longtable}
+\usepackage{fancybox}
+\usepackage[utf8]{vietnam}
+\usepackage[tight,vietnam]{minitoc}
+\usepackage{anyfontsize}
+\usepackage{subfigure}
+\usepackage{listings}
+\usepackage{color} % tô màu cho code
+%\usepackage{commath}
+
+
+
+
+
+%==================================
+\usepackage{titletoc}
+\titlecontents{chapter}
+  [0pt]
+  {\bfseries}
+  {\chaptername\ \thecontentslabel\enskip}
+  {}
+  {\hfill\contentspage}
+
+%==================================
+
+%==================================
+\renewcommand{\thechapter}{\arabic{chapter}}
+\renewcommand{\thesection}{\arabic{chapter}.\arabic{section}}
+\newcommand{\eproof}{\hfill $\square$}
+%\newcommand{\eproof}{\hfill}
+\newcommand{\chm}{{\bfseries Chứng minh.}}
+\newenvironment{cm}{\chm}{\eproof}
+%===============================
+\theoremstyle{plain}
+\newtheorem{algorithm}{\bfseries Thuật toán}[chapter]
+\providecommand*{\algorithmautorefname}{Thuật toán}
+
+\newtheorem*{namedthm}{\namedthmname}
+\newcounter{namedthm}
+\makeatletter
+\newenvironment{named}[1]
+  {\def\namedthmname{#1}%
+   \refstepcounter{namedthm}%
+   \namedthm\def\@currentlabel{#1}}
+  {\endnamedthm}
+\makeatother
+
+\theoremstyle{definition}
+\newtheorem{dn}{Định nghĩa}[chapter]
+\providecommand*{\dnautorefname}{Định nghĩa}
+\newtheorem{dl}{Định lý}[chapter]
+\providecommand*{\dnautorefname}{Định lý}
+\newtheorem{bt}{Bài toán}[chapter]
+\providecommand*{\btautorefname}{Bài toán}
+\newtheorem{vd}{\bfseries Ví dụ}[chapter]
+\providecommand*{\mdautorefname}{Ví dụ}
+
+\theoremstyle{remark}
+\newtheorem{kh}{ký hiệu}[chapter]
+\newtheorem{nx}{\bf Nhận xét}[chapter]
+\newtheorem{cy}{Chú ý}[chapter]
+
+\renewcommand{\baselinestretch}{1.35}
+\setlength{\oddsidemargin}{0.3cm}     %Lề trái tính từ điểm cách mép giấy 2.54cm
+\setlength{\topmargin}{-1cm}          %Lề trên tính từ điểm cách mép giấy 2.54cm
+\setlength{\headsep}{0.5cm}                %Khoang cach tu  Headerline tới Khối chữ
+\textwidth=15.5cm
+\textheight=24.5cm
+\renewcommand{\bibname}{Tài liệu tham khảo}
+\renewcommand{\large}{\fontsize{14pt}{14pt}\selectfont}
+\renewcommand{\Large}{\fontsize{16pt}{16pt}\selectfont}
+\renewcommand{\LARGE}{\fontsize{15pt}{15pt}\selectfont}
+\renewcommand{\th}{\fontsize{18pt}{18pt}\selectfont}
+\makeatletter
+\def\ps@myheadings{
+\def\@evenhead{\hfil\thepage\hfil}
+\def\@oddhead{
+\hfil\thepage\hfil}}
+\makeatother
+\pagestyle{myheadings}
+
+\usepackage{fancyhdr}
+
+\fancyhf{}
+
+\fancyhead[C]{\thepage}
+
+\pagestyle{fancy}
+
+\fancypagestyle{plain}
+
+\fancyhf{} % clear all header and footer fields
+
+\fancyhead[C]{\thepage}
+
+\renewcommand{\headrulewidth}{0pt}
+\newenvironment{mproof}{\paragraph{Chứng minh:}}{\hfill$\square$}
+\newenvironment{myproof}[2] {\paragraph{Proof of {#1} {#2} :}}{\hfill$\square$}
+\DeclarePairedDelimiter{\pro}{\langle}{\rangle}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\usepackage{xpatch}
+\makeatletter
+\AtBeginDocument{\xpatchcmd{\@thm}{\thm@headpunct{.}}{\thm@headpunct{}}{}{}}
+\makeatother
+\DeclareMathOperator{\vip}{VIP}
+\DeclareMathOperator{\svip}{SVIP}
+\DeclareMathOperator{\fix}{Fix}
+\allowdisplaybreaks
+\newcommand\myeq{\stackrel{\mathclap{\tiny\mbox{i.i.d}}}{\sim}}
+\newcommand\myeqq{\stackrel{\mathclap{\tiny\mbox{a.s}}}{\longrightarrow}}
+
+\usepackage[subfigure]{tocloft} % Kiểm tra xem dòng này đã có chưa
+
+% Đổi chữ "Chapter" đứng trước số 1, 2, 3... trong mục lục thành "Chương"
+\renewcommand{\cftchappresnum}{Chương }
+
+% Điều chỉnh độ rộng để chữ "Chương" không bị đè lên số
+\setlength{\cftchapnumwidth}{5.5em}
+
+%------------------------------------------------
+
+\begin{document}
+\thispagestyle{empty}
+
+
+\newgeometry{top=2cm, left=2.5cm, right=2cm, bottom=2.5cm}
+\begin{tikzpicture}[remember picture, overlay, inner sep=0, outer sep=0]
+\draw[black, line width=1pt]
+  ([xshift=-2cm, yshift=-2.5cm] current page.north east) coordinate (A) --%x = trên phải
+  ([xshift=2.5cm, yshift=-2.5cm] current page.north west) coordinate (B) -- %x = trên trái
+  ([xshift=2.5cm, yshift=3cm] current page.south west) coordinate (C) -- %x = dưới trái
+  ([xshift=-2cm, yshift=3cm] current page.south east) coordinate (D) -- cycle; %x = dưới phải
+
+\draw[black, line width=1pt]
+  ([xshift=-2cm, yshift=-2.5cm] current page.north east) coordinate (A) --%x = trên phải
+  ([xshift=4.5cm, yshift=-2.5cm] current page.north west) coordinate (B) -- %x = trên trái
+  ([xshift=4.5cm, yshift=3cm] current page.south west) coordinate (C) -- %x = dưới trái
+  ([xshift=-2cm, yshift=3cm] current page.south east) coordinate (D) -- cycle; %x = dưới phải
+
+\end{tikzpicture}
+%\rotatebox{-90}{\hspace{0.5cm}\fontsize{12pt}{15pt}\selectfont TRƯƠNG NGỌC HUYỀN}
+\turnbox{-90}{\hspace{2cm}\fontsize{12pt}{15pt}\selectfont NGUYỄN PHÚ VINH \hspace{1cm}  \hspace{12cm} HÀ NỘI - 2025}
+
+%\turnbox{-90}{\vspace{0.5cm}\hspace{9cm}\fontsize{12pt}{15pt}\selectfont XÂY DỰNG KHO DỮ LIỆU }
+%\turnbox{-90}{\vspace{0.5cm}\hspace{9cm}\fontsize{12pt}{15pt}\selectfont XÂY DỰNG KHO DỮ LIỆU }
+%\turnbox{-90}{\hspace{20cm}\fontsize{12pt}{15pt}\selectfont HÀ NỘI - 2023}
+\begin{center}
+\Large
+%\vspace{cm}
+{\fontsize{12pt}{15pt}\selectfont \hspace{1.5cm}\bfseries ĐẠI HỌC BÁCH KHOA HÀ NỘI}\\
+{\fontsize{12pt}{15pt}\selectfont\hspace{1.5cm}\bfseries KHOA TOÁN - TIN}\\
+\end{center}
+
+\vspace{1 cm}
+
+\begin{center}
+	\fontsize{17pt}{15pt}\selectfont
+	\hspace{1.5cm}\includegraphics[scale=0.1]{bkhn.png}\\
+        \vspace{0.5cm}
+        \fontsize{12pt}{15pt}\selectfont
+        \hspace{1.5cm}\bfseries NGUYỄN PHÚ VINH\\
+        \vspace{2cm}
+	\fontsize{22pt}{18pt}\selectfont
+	\hspace{2cm} \bfseries XÂY DỰNG KHO DỮ LIỆU \\ 
+        % \hspace{2cm} \bfseries CỜ TỶ PHÚ TRÊN  \\ 
+        \hspace{2cm} \bfseries CHO PHÂN TÍCH BÓNG ĐÁ \\
+	\vspace{2cm}
+	\fontsize{16pt}{16pt}\selectfont
+	\hspace{1.5cm} \bfseries ĐỒ ÁN II\\
+        \fontsize{14pt}{16pt}\selectfont
+        \hspace{1.5cm}\bfseries Chuyên ngành: TOÁN TIN\\
+        \vspace{5cm}
+        \fontsize{14pt}{16pt}\selectfont
+        \hspace{1.5cm}\bfseries HÀ NỘI - 2025
+\end{center}
+
+
+\newpage
+%-----------------------------------------------------------
+
+\thispagestyle{empty}
+%\thispagestyle{headings}
+\setcounter{page}{1}
+\pagenumbering{roman}
+
+\pagenumbering{gobble}
+\newgeometry{top=2cm, left=2.5cm, right=2cm, bottom=2.5cm}
+\begin{tikzpicture}[remember picture, overlay, inner sep=0, outer sep=0]
+\draw[black, line width=1pt]
+  ([xshift=-2cm, yshift=-2.5cm] current page.north east) coordinate (A) --%x = trên phải
+  ([xshift=2.5cm, yshift=-2.5cm] current page.north west) coordinate (B) -- %x = trên trái
+  ([xshift=2.5cm, yshift=3cm] current page.south west) coordinate (C) -- %x = dưới trái
+  ([xshift=-2cm, yshift=3cm] current page.south east) coordinate (D) -- cycle; %x = dưới phải
+\end{tikzpicture}
+\begin{center}
+\Large
+\vspace{0cm}
+{\fontsize{12pt}{15pt}\selectfont\bfseries ĐẠI HỌC BÁCH KHOA HÀ NỘI}\\
+{\fontsize{12pt}{15pt}\selectfont\bfseries KHOA TOÁN - TIN}\\
+\end{center}
+\vspace{1 cm}
+
+\begin{center}
+	\fontsize{17pt}{15pt}\selectfont
+	\includegraphics[scale=0.1]{bkhn.png}\\
+	\vspace{1.5cm}
+	\fontsize{24pt}{20pt}\selectfont
+	   \bfseries XÂY DỰNG KHO DỮ LIỆU \\ 
+        % \bfseries CỜ TỶ PHÚ TRÊN  \\ 
+        \bfseries CHO PHÂN TÍCH BÓNG ĐÁ \\ 
+\end{center}
+
+\vspace{0.5cm}
+\begin{center}
+	\fontsize{16pt}{16pt}\selectfont 	
+	{\bfseries ĐỒ ÁN II}\\	
+	\fontsize{14pt}{16pt}\selectfont
+	{\bfseries Chuyên ngành: TOÁN TIN}\\
+	\fontsize{14pt}{16pt}\selectfont
+%	{\bfseries Chuyên sâu: Các phương pháp tối ưu}\\
+\end{center}
+
+\vspace{0cm}
+\begin{center}
+\fontsize{13pt}{16pt}\selectfont
+\textbf{\begin{tabular}{l l}
+Giảng viên hướng dẫn:& TS. Nguyễn Đình Hân $\underset{\text{Chữ kí của GVHD}}{\rule{3cm}{0.5pt}}$
+\\
+Sinh viên thực hiện:& Nguyễn Phú Vinh\\
+MSSV: &20227169\\
+Lớp:&{\bfseries Toán-Tin 01 \textendash\ K67}
+\end{tabular}}
+\end{center}
+\vspace{2 cm}
+\begin{center}
+\LARGE \fontsize{13pt}{16pt}\selectfont \textbf{HÀ NỘI - 2025}
+\end{center}
+
+
+\newpage
+\newgeometry{left=3cm, right=2cm, top=2cm, bottom=2cm}
+\thisfancypage{
+	\setlength{\fboxsep}{0.5cm}
+	\fbox}{}
+
+\fontsize{13pt}{16pt}\selectfont
+\bigbreak
+\begin{center}
+	{\bfseries NHẬN XÉT CỦA GIẢNG VIÊN HƯỚNG DẪN}
+\end{center}
+\bigbreak
+
+\fontsize{12pt}{14pt}\selectfont
+\begin{enumerate}
+	\item [{\bfseries 1.}]{\bfseries Mục tiêu và nội dung của đồ án}
+	
+	%\Pointilles{6}
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+
+	\item [{\bfseries 2.}] {\bfseries Kết quả đạt được} 
+
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+	\makebox[15cm]{\dotfill}\\
+
+	\item [{\bfseries 3.}]{\bfseries Ý thức làm việc của sinh viên}
+
+    
+    \makebox[15cm]{\dotfill}\\
+    \makebox[15cm]{\dotfill}\\
+    \makebox[15cm]{\dotfill}\\
+    \makebox[15cm]{\dotfill}\\
+    \makebox[15cm]{\dotfill}\\
+    \makebox[15cm]{\dotfill}\\
+\end{enumerate}
+\hspace{0.5\textwidth}
+\begin{minipage}{0.5\textwidth}
+	\noindent\begin{center}
+		\textit{Hà Nội, ngày ... tháng ... năm 2026} \\
+		Giảng viên hướng dẫn\\ \vspace{2cm}
+		
+	\end{center}	
+\end{minipage}
+
+\begin{landscape}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{pics/danh_gia.png}
+		\caption{Báo cáo tiến độ đồ án}
+		\label{danh_gia}
+	\end{figure}
+\end{landscape}
+
+\tableofcontents % Là xuất hiện mục lục.
+
+\listoffigures
+
+\chapter*{Bảng ký hiệu và chữ viết tắt}
+\addcontentsline{toc}{chapter}{Bảng ký hiệu và chữ viết tắt}
+\begin{tabular}{@{\hspace{-0.1cm}} l @{\hspace{1.2cm}} p{11.5cm} l}
+	\textbf{$xG$} & Xác suất một cú sút thành bàn (Expected Goals) \\
+	
+	\textbf{$G-xG$} & Hiệu số giữa tổng số bàn thắng thực tế và tổng xG của cầu thủ hoặc đội bóng (Goals minus Expected Goals) \\
+	
+	\textbf{$xA$} & Xác suất một đường chuyền trở thành kiến tạo (Expected Assists) \\
+	
+	\textbf{$PPDA$} & Số đường chuyền trung bình của đội B trong khu vực $2/3$ sân cuối cùng (có tọa độ $x \ge 40$ trên sân có kích cỡ $120 \times 80$) trước khi đội A thực hiện một hành động phòng ngự (Passes Per Defensive Action)\\
+	
+	\textbf{$TiB/90$} & Số lần chạm bóng trong vòng cấm của đối phương, được chuẩn hóa theo 90 phút thi đấu (Touches in Box/90) \\
+	
+	\textbf{$PAdjI/90$} & Số lần cắt bóng đã điều chỉnh theo quyền kiểm soát bóng (Possession-Adjusted Interceptions/90) \\
+	
+	\textbf{$TSR$} & Tỷ lệ tắc bóng thành công (Tackles Success Rate) \\
+	
+	\textbf{DW} & Kho dữ liệu (Data Warehouse) \\
+	
+	\textbf{OLTP} & Hệ thống xử lý giao dịch trực tuyến (Online Transaction Processing) \\
+	
+	\textbf{OLAP} & Hệ thống phân tích trực tuyến (Online Analytical Processing) \\
+	
+	\textbf{BI} & Kinh doanh thông minh (Business Intelligence)\\
+	
+	\textbf{EDW} & Kho dữ liệu doanh nghiệp (Enterprise Data Warehouse) \\
+\end{tabular}
+
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\chapter*{Lời mở đầu}
+\addcontentsline{toc}{chapter}{\bfseries Lời mở đầu}
+\fontsize{13pt}{16pt}\selectfont
+Trong thời đại số hóa, dữ liệu đã trở thành một trong những yếu tố then chốt trong việc đưa ra quyết định và định hướng chiến lược ở mọi lĩnh vực, bao gồm cả thể thao.
+
+Trong bóng đá, việc phân tích hiệu suất cầu thủ, tối ưu hóa chiến thuật, điều chỉnh giáo án tập luyện và đánh giá trận đấu đều phụ thuộc vào khả năng thu thập, xử lý và phân tích lượng dữ liệu khổng lồ (bao gồm dữ liệu sự kiện, dữ liệu theo dõi vị trí, dữ liệu vật lý, ...). Để khai thác tối đa giá trị của nguồn dữ liệu này, việc xây dựng một kho dữ liệu (Data Warehouse) hiệu quả và đầy đủ là rất cần thiết.
+
+Xuất phát từ lý do trên, em quyết định lựa chọn đề tài "Xây dựng kho dữ liệu cho phân tích bóng đá". Đồ án mong muốn xây dựng một kho dữ liệu giúp giải quyết các bài toán phân tích, dự báo, và cung cấp những góc nhìn đa chiều về dữ liệu bóng đá, hỗ trợ công tác huấn luyện và quản lý bóng đá hiệu quả hơn.
+
+% Quá trình xử lý bao gồm việc thu thập dữ liệu từ các trang web chính thức, chuẩn hóa và tích hợp dữ liệu để đảm bảo đáp ứng được các nhu cầu nghiên cứu và đề xuất phân tích. Sau đó, dữ liệu được tích hợp và đưa lên Apache Airflow để tự động hoá quy trình xử lý và phân phối dữ liệu.
+
+Ngoài phần Mở đầu và Kết luận, đồ án của em sẽ bao gồm 4 chương chính:
+\begin{itemize}
+	\item Chương I: Cơ sở lý thuyết.
+    \item Chương II: Khảo sát hệ thống.
+    \item Chương III: Thiết kế hệ thống.
+    \item Chương IV: Cài đặt hệ thống.
+\end{itemize}
+%\begin{minipage}{0.5\textwidth}
+%\end{minipage}
+\hspace{0.5\textwidth}
+\begin{minipage}{0.5\textwidth}
+	\noindent\begin{center}
+		\vspace{0.6cm}
+		\textit{Hà Nội, tháng 10 năm 2025} \\
+		Sinh viên \\ \vspace{1.8cm}
+		\textbf{Nguyễn Phú Vinh}
+	\end{center}	
+\end{minipage}
+
+\chapter*{Lời cảm ơn}
+
+Em xin gửi lời cảm ơn chân thành đến thầy Nguyễn Đình Hân, người đã tận tình hướng dẫn và đồng hành cùng em trong suốt quá trình thực hiện đồ án này. Sự chỉ bảo tận tâm cùng những ý kiến đóng góp quý giá của thầy đã giúp em xác định hướng đi đúng đắn và vượt qua nhiều thử thách trong quá trình phát triển phần mềm. Em cũng xin gửi lời cảm ơn chân thành đến các thầy cô Khoa Toán-Tin, Đại học Bách khoa Hà Nội. Sự tận tâm giảng dạy và kiến thức mà các thầy cô truyền đạt đã giúp em tự tin áp dụng lý thuyết vào thực tiễn, góp phần quan trọng vào việc hoàn thiện đồ án này.
+
+Dù đã nỗ lực hết mình để thực hiện và hoàn thành đồ án, em nhận thấy sản phẩm của mình vẫn còn những thiếu sót. Vì vậy, em rất mong nhận được những ý kiến nhận xét quý báu từ thầy cô để có thể cải thiện đồ án tốt hơn, đồng thời tích lũy thêm kinh nghiệm thực tế cho bản thân.
+
+Em xin chân thành cảm ơn!
+
+
+% Lời đầu tiên, em xin gửi lời cảm ơn chân thành đến TS. Vương Mai Phương - giảng viên khoa Toán - Tin, vì đã giúp đỡ và hướng dẫn em trong quá trình làm đồ án tốt nghiệp. Cô đã truyền đạt cho em nhiều kiến thức quý báu, giúp em vượt qua những thách thức và phát triển không ngừng trong quãng thời gian nghiên cứu và xây dựng hệ thống. Cô luôn sẵn sàng, tận tình hỗ trợ em trong việc giải quyết các khó khăn và thắc mắc liên quan đến đồ án. Một lần nữa, em xin chân thành cảm ơn Cô và hi vọng vẫn tiếp tục nhận được sự hướng dẫn và giúp đỡ của Cô trong những thử thách sắp tới.
+
+% Em cũng muốn gửi lời cảm ơn đến các thầy cô trong khoa Toán - Tin, Đại học Bách khoa Hà Nội, đã dẫn dắt em đi qua khoảng thời gian học tập và nghiên cứu tại trường. 
+
+% Bên cạnh đó, con cũng muốn gửi lời cảm ơn đến bố mẹ, anh chị và người thân đã luôn bên cạnh ủng hộ và giúp đỡ con, mọi người chính là nguồn động lực để con phấn đấu và cố gắng từng ngày. 
+
+% Lời cảm ơn cuối cùng, mình muốn gửi tới chính là bạn bè, những người anh chị em thân thiết đã đồng hành cùng mình suốt quãng thời gian qua. Cảm ơn vì những lời động viên, cảm ơn vì luôn tin tưởng, cảm ơn vì đã không bao giờ bỏ lại mình khi mình khó khăn nhất. Và mình cũng muốn cảm ơn Bách khoa - là ước mơ, là hi vọng, là niềm tự hào và là nơi mình đã gắn bó hơn 4 năm qua. Quãng thời gian sinh viên của mình thực sự đã kết thúc, mình cũng cảm ơn chính mình vì đã không bỏ cuộc, cảm ơn vì đã luôn lạc quan và tin tưởng vào tương lai!
+
+% Trong quá trình làm Đồ án không thể tránh khỏi những thiếu sót, em rất mong nhận được những ý kiến đóng góp của thầy cô để Đồ án được hoàn thiện hơn.
+
+% Em xin trân trọng cảm ơn!
+
+
+% \chapter*{Bảng ký hiệu và chữ viết tắt}
+
+% \begin{tabular}
+% 	{@{\hspace{-0.1cm}} l 
+%  @{\hspace{1.2cm}}p{11.5cm}l}
+% \textbf{MVC}& Model-View-Controller\\
+% \textbf{HTTP}& HyperText Transfer Protocol\\
+% \textbf{HTML} & HyperText Markup Language\\
+% \textbf{CSS} & Cascading Style Sheets\\
+% \textbf{URL}& Uniform Resource Locator\\
+% \textbf{UI}& User Interface\\
+% \textbf{UX}& User Experience\\
+% \textbf{SPA}& Single-Page Application\\
+% \textbf{SEO}& Search Engine Optimization\\
+% \textbf{API}& Application Programming Interface\\
+% \textbf{DBMS}& Database Management System\\
+% \textbf{REST}& REpresentational State Transfer\\
+% \textbf{SOAP}& Simple Object Access Protocol\\
+% \textbf{JSON}& JavaScript Object Notation\\
+% \textbf{SQL}& Structured Query Language - Ngôn ngữ truy vấn có cấu trúc\\
+% \end{tabular}
+
+\newpage
+
+\chapter{Cơ sở lý thuyết}
+\input{Chuong0-1}
+\input{Chuong0-2}
+\input{Chuong0-3}
+
+\chapter{Khảo sát hệ thống}
+\input{Chuong1-1}
+\input{Chuong1-2}
+\input{Chuong1-3}
+\input{Chuong1-4}
+\input{Chuong1-5}
+
+\chapter{Thiết kế hệ thống}
+\input{Chuong2-1}
+\input{Chuong2-2}
+\input{Chuong2-3}
+\input{Chuong2-4}
+\input{Chuong2-5}
+
+\chapter{Cài đặt hệ thống}
+\input{Chuong3-1}
+%\input{Chuong3-2}
+
+%\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+\chapter*{Kết luận}                        
+\addcontentsline{toc}{chapter}{Kết luận}
+
+\section*{Các kết quả đạt được}
+Đồ án đã giải quyết được các bài toán kỹ thuật và nghiệp vụ cốt lõi sau:
+
+\begin{itemize}
+	\item \textbf{Xây dựng quy trình xử lý dữ liệu hiện đại:} Triển khai thành công đường ống dữ liệu tự động hóa sử dụng \textbf{Apache Airflow}, tự động trích xuất dữ liệu thô, lưu trữ tại Data Lake (\textbf{MinIO}) và chuyển đổi dữ liệu đa tầng.
+	
+	\item \textbf{Xử lý dữ liệu bán cấu trúc:} Sử dụng \textbf{Apache Spark} để làm phẳng và chuẩn hóa dữ liệu từ định dạng JSON lồng nhau của StatsBomb. Dữ liệu sau xử lý đảm bảo tính toàn vẹn và sẵn sàng cho các truy vấn phân tích.
+	
+	\item \textbf{Thiết kế Kho dữ liệu tối ưu:} Xây dựng thành công mô hình dữ liệu dạng lược đồ sao trên hệ quản trị \textbf{PostgreSQL}. Các bảng được thiết kế tối ưu cho các chỉ số như bàn thắng kỳ vọng (xG), kiến tạo kỳ vọng (xA) và PPDA.
+	
+	\item \textbf{Trực quan hóa và hỗ trợ ra quyết định:} Hệ thống báo cáo trên \textbf{Microsoft PowerBI} cung cấp các Dashboard trực quan.
+\end{itemize}
+
+\section*{Hạn chế}
+Bên cạnh những kết quả đạt được, đồ án vẫn còn tồn tại một số hạn chế:
+
+\begin{itemize}
+	\item \textbf{Độ trễ dữ liệu:} Hệ thống hiện tại hoạt động theo cơ chế xử lý theo lô. Dữ liệu chỉ được cập nhật sau khi trận đấu kết thúc, chưa hỗ trợ phân tích thời gian thực ngay trong khi trận đấu đang diễn ra.
+	
+	\item \textbf{Phạm vi dữ liệu:} Do giới hạn của nguồn dữ liệu mở StatsBomb, đồ án mới chỉ tập trung phân tích sâu cho một số giải đấu và câu lạc bộ cụ thể (như Barcelona, La Liga).
+\end{itemize}
+
+\section*{Hướng phát triển trong tương lai}
+Để nâng cao tính ứng dụng và hoàn thiện hệ thống, các hướng phát triển tiếp theo được đề xuất bao gồm:
+
+\begin{itemize}
+	\item \textbf{Tích hợp xử lý thời gian thực:} Sử dụng công nghệ \textbf{Apache Kafka} hoặc \textbf{Spark Streaming} vào kiến trúc hệ thống để thu thập và xử lý sự kiện ngay lập tức, phục vụ cho các quyết định chiến thuật trực tiếp trong trận đấu.
+	
+	\item \textbf{Mở rộng và tối ưu hóa hạ tầng:} Triển khai hệ thống lên các nền tảng đám mây để tận dụng khả năng mở rộng linh hoạt, đồng thời tối ưu hóa chi phí lưu trữ và hiệu năng tính toán khi khối lượng dữ liệu lịch sử tăng lên.
+\end{itemize}
+% \hspace{0.5cm} Trong quá trình nghiên cứu và thực hiền Đồ án, em đã dành thời gian nghiên cứu và phát triển một hệ thống về quản lý thực thực tập liên kết doanh nghiệp. Mục tiêu của dự án là tối ưu hóa quy trình đăng ký và quản lý thực tập, tạo điều kiện thuận lợi cho sinh viên và doanh nghiệp hợp tác.
+
+% \hspace{0.5cm} Sự hỗ trợ và hướng dẫn của cô Vương Mai Phương và sự đồng hành của các bạn đã đóng vai trò quan trọng trong quá trình nghiên cứu và phát triển dự án. Nhờ vào sự giúp đỡ và chia sẻ kinh nghiệm, em đã học hỏi được nhiều kỹ năng quan trọng và củng cố kiến thức nền, góp phần làm cho dự án trở nên thực tế và ứng dụng trong thực tế. Kết quả em đã đạt được sau khi hoàn thành Đồ án như sau:
+% \begin{itemize}
+%     \item Chương trình tuy chưa thực sự hoàn hảo nhưng bên cạnh đó em thấy được vấn đề quan trọng của lĩnh vực quản lý thông tin trong việc tìm kiếm công việc, quản lý sinh viên, kết nối sinh viên và doanh nghiệp.
+%     \item Vận dụng các kiến thức Phân tích và Thiết kế để vẽ và mô tả các sơ đồ use case, sơ đồ hoạt động, mô tả cơ sở dữ liệu.
+%     \item Nắm bắt được nhu cầu tìm kiếm công việc thực tập của sinh viên để kết hợp chức năng tìm kiếm việc làm và quản lý thực tập vào một hệ thống.
+%     \item Phân tích và thiết kế được hệ thống phù hợp với nhu cầu người dùng, xây dựng được website với khá đầy đủ tính năng.
+%     \end{itemize}
+% \hspace{0.5cm} Do thời gian thực hiện phân tích và thiết kế hệ thống là tương đối hạn chế so với một đề tài rộng và phong phú nên không tránh khỏi những thiếu sót:
+
+% \begin{itemize}
+%     \item Chưa xây dựng được mô hình tìm kiếm tối ưu để lọc, bóc tách dữ liệu.
+%     \item Chưa xây dựng được các báo cáo thống kê để người dùng có thể dễ dàng quản lý.
+% \end{itemize}
+% \hspace{0.5cm} Trong tương lai, em hi vọng sẽ cố gắng hoàn thiện tốt đề tài này và cố gắng đáp ứng được yêu cầu hệ thống thực đòi hỏi:
+% \begin{itemize}
+%     \item Nghiên cứu và tìm hiểu một số mô hình mới nhằm đảm bảo hiệu quả gợi ý tốt nhất trong quá trình kết nối sinh viên với các cơ hội thực tập linh hoạt từ doanh nghiệp.
+%     \item Phát triển UI/UX để người dùng có thể trải nghiệm tốt hơn.
+%     \item Bổ sung và cải thiện các dashboard để đảm bảo người quản trị và người sử dụng có cái nhìn toàn diện và dễ dàng theo dõi về tình hình đăng ký thực tập. Cung cấp các báo cáo thống kê chất lượng, hỗ trợ phân tích nghiệp vụ chuyên sâu hơn, giúp doanh nghiệp và trường đại học hiểu rõ hơn về xu hướng và nhu cầu thị trường.
+% \end{itemize}
+
+%  Trong bối cảnh các hệ thống hỗ trợ quyết định ngày càng đóng vai trò quan trọng, việc xây dựng một hệ thống chuẩn bị dữ liệu cho bài toán tuyển sinh đã trở thành nhu cầu thiết yếu đối với các trường đại học. Trong đồ án này, em đã thực hiện việc xây dựng một hệ thống tự động hoá quá trình thu thập, xử lý và quản lý dữ liệu tuyển sinh, sử dụng Apache Airflow để đảm bảo tính tự động và đồng bộ trong quá trình xử lý dữ liệu.
+
+%  Việc đồng bộ hóa và tự động hoá trong quá trình thu thập và xử lý dữ liệu giúp đảm bảo rằng hệ thống có thể xử lý lượng dữ liệu lớn một cách hiệu quả. Việc địa dữ liệu vào Apache Airflow không chỉ giúp quản lý dữ liệu một cách có hệ thống, mà còn tăng tính linh hoạt và mở rộng của hệ thống để đáp ứng các yêu cầu trong tương lai.
+
+%  Quá trình thực hiện đồ án đã giúp em hiểu rõ hơn về các công nghệ và quy trình trong hệ sinh thái xử lý dữ liệu, cũng như đồng thời nâng cao kỹ năng giải quyết vấn đề thực tế. Kết quả đạt được không chỉ là nền tảng cho các bài toán tuyển sinh trong tương lai, mà còn có thể được áp dụng trong các bài toán khác, như dự đoán xu hướng tuyển sinh hay các bài toán phân tích dữ liệu giáo dục.
+
+% Cuối cùng, em xin gửi lời cảm ơn đến thầy Lê Chí Ngọc, người đã tận tâm hướng dẫn em trong suốt quá trình thực hiện đồ án. Sự hỗ trợ và định hướng của thầy đã góp phần quan trọng trong việc giúp chúng tôi đạt được các mục tiêu đề ra và nâng cao kỹ năng giải quyết vấn đề. Em chân thành biết ơn thầy và mong rằng những kinh nghiệm thu được từ đồ án này sẽ tiếp tục được ứng dụng trong các dự án trong tương lai.
+
+%Trò chơi Cờ tỷ phú đã được xây dựng với mục tiêu đưa trò chơi từ bộ bàn cờ thực tế, cồng kềnh với luật chơi phức tạp lên các thiết bị di động sử dụng hệ điều hành Android và đơn giản hóa, tự động hóa tiến trình chơi. Hệ thống đã đạt được:
+%\begin{itemize}
+%    \item Bàn cờ được thay đổi, biến tấu để các địa danh, hành động,... trở nên quen thuộc, gần gũi hơn đối với người dân Việt Nam nói chung và Hà Nội nói riêng.
+%    \item Luật chơi phức tạp được đơn giản hóa nhưng vẫn giữ được bản chất của trò chơi và lối chơi thú vị để giúp người chơi dễ tiếp cận, dễ hiểu và giảm thời gian chơi theo xu hướng giải trí hiện đại ngày nay.
+%    \item Trò chơi tương thích với nhiều thiết bị Android kể cả cấu hình yếu, có thể chơi mọi lúc, mọi nơi mà không yêu cầu kết nối mạng.
+    % \item Báo cáo đa chiều về thông tin nhân khẩu học của thí sinh và xu hướng nguyện vọng các ngành nghề của Đại học Bách Khoa Hà Nội.
+    % \item Sử dụng Apache Airflow để theo dõi, lập lịch trong quá trình xử lý dữ liệu. 
+%\end{itemize}
+
+%Trong tương lai, trò chơi sẽ được phát triển thêm theo các hướng sau:
+%\begin{itemize}
+%    \item Có thêm chức năng lưu tiến trình chơi.
+%    \item Có thêm nhân vật, bộ bàn cờ được thay đổi để trở nên bắt mắt, đa dạng hơn.
+%    \item Đồ họa được xử lý đẹp mắt, hoàn thiện hơn.
+%    \item Biến tấu thêm về luật chơi để tăng tính hấp dẫn, chiến thuật cho trò chơi.
+%\end{itemize}
+\newpage
+
+\printindex 
+
+\newpage
+% \chapter*{Tài liệu tham khảo}
+\addcontentsline{toc}{section}{Tài liệu tham khảo}
+
+\setlength\bibitemsep{1\itemsep} % Tăng khoảng cách giữa các mục
+% \printbibliography[heading=none]
+\nocite{*}
+\printbibliography
+
+\end{document}

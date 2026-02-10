@@ -1,0 +1,458 @@
+% Hust Template 
+% Release 2020, Ferb 20
+% Author NMH UayUayUay =))))
+%
+%
+
+\usepackage{datetime}
+\usepackage{microtype}
+
+\definecolor{HustBlue}{RGB}{22,40,206}
+\definecolor{HustRed}{RGB}{206,22,40}
+\definecolor{HustYellow}{RGB}{242,193,8}
+
+\DeclareOptionBeamer{aspectratio}{%
+  \ifnum#1=1610 %
+    \geometry{papersize={16cm,12cm}}%
+  \else\ifnum#1=169 %
+    \geometry{papersize={16cm,12cm}}
+  \else\ifnum#1=149 %
+    \geometry{papersize={14cm,12cm}}
+  \else\ifnum#1=54 %
+    \geometry{papersize={12.5cm,11.5cm}}
+  \else\ifnum#1=43 %
+    \geometry{papersize={12.8cm,11cm}}
+  \else\ifnum#1=32 %
+    \geometry{papersize={13.5cm,10.5cm}}
+  \else\ifnum#1=141 %
+    \geometry{papersize={14.85cm,12cm}}
+  \fi\fi\fi\fi\fi\fi\fi
+}
+\ExecuteOptionsBeamer{aspectratio=169}
+\ProcessOptionsBeamer
+
+\def\advisor{\@dblarg\beamer@advisor}
+\long\def\beamer@advisor[#1]#2{
+  \def\insertadvisor{#2}  
+ % \def\insertshortadvisor{#1}
+}
+\advisor{}  
+
+\def\thanksline{\@dblarg\beamer@thanksline}
+\long\def\beamer@thanksline[#1]#2{
+  \def\insertthanksline{#2}  
+}
+\thanksline{Thank you!}  
+  
+\newcommand{\fillbackground}{
+\pgfpathmoveto{\pgfpointorigin}
+\pgfpathrectanglecorners{\pgfpoint{0pt}{0pt}}{\pgfpoint{\paperwidth}{-\paperheight}}
+\pgfsetfillcolor{HustRed}
+\pgfusepath{fill}}
+
+% Define end frame
+\newcommand\ThankYouFrame[1]{
+\begin{frame}[plain,t]
+\begin{pgfpicture}
+\pgf@relevantforpicturesizefalse
+\pgftransformxshift{-\Gm@lmargin}
+\pgftransformyshift{5.5pt}
+\fillbackground
+\pgftext[at=\pgfpoint{.5\paperwidth}{-.5\paperheight},center,center]{\fcolorbox{HustRed}{white}{\pgfuseimage{white-logo}}}
+\pgftext[at=\pgfpoint{.5\paperwidth}{-.17\paperheight},center,center]{\huge\textcolor{white}{#1}}
+%\pgftext[at=\pgfpoint{.3\paperwidth}{-.9\paperheight},center,center]{\small\textcolor{white}{\insertshortauthor}}
+\pgftext[at=\pgfpoint{.7\paperwidth}{-.9\paperheight},center,center]{\small\textcolor{white}{\insertshortauthor}}
+\end{pgfpicture}
+\end{frame}
+}
+
+\AtEndDocument{\mode<beamer>{\ThankYouFrame{\insertthanksline}}}
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Nội dung chính}
+    \begin{columns}[onlytextwidth,t]
+    \column{0.5\textwidth}
+    \tableofcontents[sections = 1-3 , currentsection, currentsubsection,subsectionstyle=show/show/hide]
+    \column{0.5\textwidth}
+    \tableofcontents[sections = 4-7 , currentsection, currentsubsection,subsectionstyle=show/show/hide]
+    \end{columns}
+  \end{frame}
+}
+
+
+% Define OuterTheme
+\newdimen\beamer@sidebarwidth
+\newdimen\beamer@headheight
+\usebeamerfont{frametitle}
+\beamer@sidebarwidth=0.15\paperwidth
+\beamer@headheight=0.15\paperheight
+\reset@font
+\def\beamer@lefttext{left}
+\def\beamer@sidebarside{left}
+\DeclareOptionBeamer{hideothersubsections}[]{\beamer@nav@subsectionstyle{show/show/hide}}
+\DeclareOptionBeamer{hideallsubsections}[]{\beamer@nav@subsectionstyle{hide}}
+\ExecuteOptionsBeamer{hideothersubsections}
+\ProcessOptionsBeamer
+\mode<presentation>
+\ifdim\beamer@headheight>0pt
+% if head height is 0pt, use default frame title
+  \setbeamercolor*{frametitle}{parent=sidebar}
+  \defbeamertemplate*{frametitle}{sidebar theme}
+  {
+    \nointerlineskip
+    \ifbeamer@plainframe
+      \hbox{\usebeamercolor[bg]{frametitle}
+        \@tempdima\paperwidth\advance\@tempdima-\beamer@sidebarwidth
+        \hskip-\beamer@leftmargin\vrule height\beamer@headheight width\@tempdima\hskip-\beamer@rightmargin}
+      \nointerlineskip
+    \fi
+    \vskip-\beamer@headheight
+    \vbox to \beamer@headheight{
+      \vfil
+      \leftskip=-\beamer@leftmargin
+      \advance\leftskip by0.3cm
+      \rightskip=-\beamer@rightmargin
+      \advance\rightskip by0.3cm plus1fil
+      {\usebeamercolor[fg]{frametitle}\usebeamerfont{frametitle}\strut\insertframetitle\par}
+      \ifx\insertframesubtitle\@empty\else
+        {\usebeamercolor[fg]{framesubtitle}\usebeamerfont{framesubtitle}\strut\insertframesubtitle\par}
+      \fi
+      \vbox{}
+      \vskip-1em
+      \vfil
+    }
+  }
+\defbeamertemplate*{headline}{sidebar theme}
+  {
+    \begin{beamercolorbox}[wd=\paperwidth]{frametitle}
+      \ifx\beamer@sidebarside\beamer@lefttext
+      \else
+        \hfill
+      \fi
+      \ifdim\beamer@sidebarwidth>0pt
+        \usebeamercolor[bg]{logo}
+        \vrule width\beamer@sidebarwidth height \beamer@headheight
+        \hskip-\beamer@sidebarwidth
+        \hbox to \beamer@sidebarwidth{\hss\vbox to
+          \beamer@headheight{\vss\hbox{\color{fg}\insertlogo}\vss}\hss}
+      \else
+        \vrule width0pt height \beamer@headheight 
+      \fi
+    \end{beamercolorbox}
+  }
+\fi
+\def\beamer@sidebarformat#1#2#3{
+  \begin{beamercolorbox}[wd=\beamer@sidebarwidth,leftskip=#1,rightskip=1ex plus1fil,vmode]{#2}
+    \vbox{}
+    #3\par
+    \vbox{}
+    \vskip-1.5ex
+  \end{beamercolorbox}
+}
+\defbeamertemplate*{section in sidebar}{sidebar theme}
+{
+  \vbox{
+    \vskip1ex
+    \beamer@sidebarformat{3pt}{section in sidebar}{\insertsectionhead}
+  }
+
+}
+\defbeamertemplate*{section in sidebar shaded}{sidebar theme}
+{
+  \vbox{
+    \vskip1ex
+    \beamer@sidebarformat{3pt}{section in sidebar shaded}{\insertsectionhead}
+  }
+}
+\defbeamertemplate*{subsection in sidebar}{sidebar theme}
+{\beamer@sidebarformat{5pt}{subsection in sidebar}{\insertsubsectionhead}}
+\defbeamertemplate*{subsection in sidebar shaded}{sidebar theme}
+{\beamer@sidebarformat{5pt}{subsection in sidebar shaded}{\insertsubsectionhead}}
+\defbeamertemplate*{subsubsection in sidebar}{sidebar theme}
+{\beamer@sidebarformat{7pt}{subsubsection in sidebar}{\insertsubsubsectionhead}}
+\defbeamertemplate*{subsubsection in sidebar shaded}{sidebar theme}
+{\beamer@sidebarformat{7pt}{subsubsection in sidebar shaded}{\insertsubsubsectionhead}}
+% Define sidebar (if exist)
+\ifdim\beamer@sidebarwidth>0pt
+  \setbeamersize{sidebar width \beamer@sidebarside=\beamer@sidebarwidth}
+  \defbeamertemplate*{sidebar \beamer@sidebarside}{sidebar theme}
+  {
+    \beamer@tempdim=\beamer@sidebarwidth
+    \advance\beamer@tempdim by -6pt
+    {\usebeamerfont{title in sidebar}
+      \vskip1.5em
+      \hskip3pt
+      \usebeamercolor[fg]{title in sidebar}
+      \insertshorttitle[width=\beamer@tempdim,center,respectlinebreaks]\par%
+      \vskip1.25em
+    }
+    {
+      \hskip3pt
+      \usebeamercolor[fg]{author in sidebar}
+      \usebeamerfont{author in sidebar}
+      \insertshortauthor[width=\beamer@tempdim,center,respectlinebreaks]\par
+      \vskip1.25em
+    }
+    \insertverticalnavigation{\beamer@sidebarwidth}
+    \vfill
+    \ifx\beamer@sidebarside\beamer@lefttext
+    \else%
+      \usebeamercolor{normal text}
+      \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}
+      \vskip2pt
+    \fi
+  }
+% The Margins
+  \setbeamersize{text margin left=0.5cm,text margin right=0.5cm}
+\fi
+\mode<all>
+
+\pgfdeclareimage[width=0.1\paperwidth]{small-logo1}{Hust/logo.png}
+\pgfdeclareimage[height=0.128\paperheight]{small-logo}{fami.png}
+\pgfdeclareimage[height=0.12\paperheight]{type-logo}{logohust.png}
+\pgfdeclareimage[height=0.5\paperheight]{white-logo}{Hust/logo.png}
+%\pgfdeclareimage[width=.325\paperwidth]{large-corner}{Hust/large-corner} % version triangle
+\pgfdeclareimage[height=0.5\paperheight]{large-corner}{Hust/large-corner} % version square
+\pgfdeclareimage[height=0.3\paperheight]{small-corner}{Hust/small-corner}
+\pgfdeclareimage[height=0.4\paperheight]{big-corner}{Hust/big-corner}
+
+\setbeamertemplate{background}
+{\pgftext[at=\pgfpoint{\paperwidth}{-1.05\paperheight},right,base]{\pgfuseimage{big-corner}}}
+
+\setbeamertemplate{sidebar left}{
+\vskip 5pt
+\insertverticalnavigation{\beamer@sidebarwidth}
+}
+
+\setbeamertemplate{footline}[text line]{
+\insertshortauthor\strut\hfill\insertshortsubtitle\hfill\insertshortdate}
+
+\addtobeamertemplate{frametitle}{}{
+\begin{pgfpicture}
+\pgf@relevantforpicturesizefalse
+\pgftransformxshift{-\Gm@lmargin}
+\pgftransformyshift{\beamer@headheight+18pt}
+
+\pgftext[at=\pgfpoint{\paperwidth}{-\beamer@headheight},right,base]{\pgfuseimage{small-corner}}
+
+\pgfpathmoveto{\pgfpoint{.15\paperwidth}{0pt}}
+\pgfpathlineto{\pgfpoint{.15\paperwidth}{-\beamer@headheight}}
+\pgfsetlinewidth{5pt}
+\pgfsetinnerlinewidth{2pt}
+\pgfsetinnerstrokecolor{HustRed}
+\pgfsetcolor{white}
+\pgfusepath{stroke}
+
+\pgfpathmoveto{\pgfpoint{.15\paperwidth}{-.18\paperheight}}
+\pgfpathlineto{\pgfpoint{.15\paperwidth}{-.97\paperheight}}
+\pgfsetlinewidth{1pt}
+\pgfsetinnerlinewidth{0pt}
+\pgfsetcolor{HustYellow}
+\pgfusepath{stroke}
+
+\pgftext[at=\pgfpoint{.07\paperwidth}{-.15\paperheight},center,base]{\pgfuseimage{small-logo}}
+
+\pgftext[at=\pgfpoint{.075\paperwidth}{-.97\paperheight},center,base]{\pgfuseimage{small-logo1}}
+\end{pgfpicture}
+\vskip-20pt
+}
+
+\addtobeamertemplate{title page}{
+\usebeamertemplate{title background}
+\vskip.1\paperheight 
+}
+
+\setbeamertemplate{title background}{
+\begin{pgfpicture}
+\pgf@relevantforpicturesizefalse
+\pgftransformxshift{-\Gm@lmargin}
+\pgftransformyshift{5.5pt}
+\fillbackground
+
+%\pgftext[at=\pgfpoint{\paperwidth}{-\paperheight},right,base]{\pgfuseimage{large-corner}} % version triangle
+\pgftext[at=\pgfpoint{1\paperwidth}{-1\paperheight},right,base]{\pgfuseimage{large-corner}} % version square
+
+\pgfpathmoveto{\pgfpointorigin}
+\pgfpathrectanglecorners{\pgfpoint{0pt}{0pt}}{\pgfpoint{\paperwidth}{-.20\paperheight}}
+\pgfsetfillcolor{white}
+\pgfusepath{fill}
+
+\pgftext[at=\pgfpoint{.024\paperwidth}{-.16\paperheight},left,base]{\pgfuseimage{type-logo}}
+
+\pgfpathrectanglecorners{\pgfpoint{0pt}{-.17\paperheight}}{\pgfpoint{.15\paperwidth}{-.19\paperheight}}
+\pgfsetfillcolor{HustRed}
+\pgfusepath{fill}
+
+\pgfpathrectanglecorners{\pgfpoint{.15\paperwidth}{-.17\paperheight}}{\pgfpoint{\paperwidth}{-.19\paperheight}}
+\pgfsetfillcolor{HustYellow}
+\pgfusepath{fill}
+
+\pgfpathmoveto{\pgfpoint{.15\paperwidth}{-.21\paperheight}}
+\pgfpathlineto{\pgfpoint{.15\paperwidth}{-.97\paperheight}}
+\pgfsetlinewidth{1pt}
+\pgfsetcolor{HustYellow}
+\pgfusepath{stroke}
+
+\ifx\insertadvisor\@empty
+\else\pgftext[at=\pgfpoint{.16\paperwidth}{-.95\paperheight},left,base]{\pgfsetcolor{white}\normalsize Advisor: \insertadvisor}\fi
+
+\pgftext[at=\pgfpoint{0\paperwidth}{-.99\paperheight},left,base]{\pgfsetcolor{white}\tiny\enskip 04102004}
+\end{pgfpicture}%
+}
+
+\DeclareOptionBeamer{transition}{\def\beamer@HustTemplate@trans{#1}}
+\ExecuteOptionsBeamer{transition=fade} 
+\ProcessOptionsBeamer
+
+\DeclareOptionBeamer{duration}{\def\beamer@HustTemplate@duration{#1}}
+\ExecuteOptionsBeamer{duration=0.2} 
+\ProcessOptionsBeamer
+
+\def\beamer@HustTemplate@transboxin{boxin}
+\def\beamer@HustTemplate@transboxout{boxout}
+\def\beamer@HustTemplate@transcover{cover}
+\def\beamer@HustTemplate@transdissolve{dissolve}
+\def\beamer@HustTemplate@transfade{fade}
+\def\beamer@HustTemplate@transpush{push}
+\def\beamer@HustTemplate@transwipe{wipe}
+
+\ifx\beamer@HustTemplate@trans\beamer@HustTemplate@transboxin
+    \addtobeamertemplate{background canvas}{\transboxin[duration=\beamer@HustTemplate@duration]}{} 
+\else
+\ifx\beamer@HustTemplate@trans\beamer@HustTemplate@transboxout
+    \addtobeamertemplate{background canvas}{\transboxout[duration=\beamer@HustTemplate@duration]}{} 
+\else
+\ifx\beamer@HustTemplate@trans\beamer@HustTemplate@transcover
+    \addtobeamertemplate{background canvas}{\transcover[duration=\beamer@HustTemplate@duration]}{} 
+\else
+\ifx\beamer@HustTemplate@trans\beamer@HustTemplate@transdissolve
+    \addtobeamertemplate{background canvas}{\transdissolve[duration=\beamer@HustTemplate@duration]}{} 
+\else
+\ifx\beamer@HustTemplate@trans\beamer@HustTemplate@transpush
+    \addtobeamertemplate{background canvas}{\transpush[duration=\beamer@HustTemplate@duration]}{} 
+\else
+\ifx\beamer@HustTemplate@trans\beamer@HustTemplate@transwipe
+    \addtobeamertemplate{background canvas}{\transwipe[duration=\beamer@HustTemplate@duration]}{} 
+\else
+    \addtobeamertemplate{background canvas}{\transfade[duration=\beamer@HustTemplate@duration]}{} 
+\fi\fi\fi\fi\fi\fi
+
+
+\DeclareOptionBeamer{bignote}[]{
+\defbeamertemplate*{note page}{bignote}
+{%
+  {%
+    \scriptsize
+    \usebeamerfont{note title}\usebeamercolor[fg]{note title}%
+    \ifbeamercolorempty[bg]{note title}{}{%
+      \insertvrule{.45\paperheight}{note title.bg}%
+      \vskip-.45\paperheight%
+      \nointerlineskip%
+    }%
+    \vbox{
+      \hfill\insertslideintonotes{0.45}\hskip-\Gm@rmargin\hskip0pt%
+      \vskip-0.45\paperheight%
+      \nointerlineskip
+      \begin{pgfpicture}{0cm}{0cm}{0cm}{0cm}
+        \begin{pgflowlevelscope}{\pgftransformrotate{90}}
+          {\pgftransformshift{\pgfpoint{-2cm}{0.2cm}}%
+          \pgftext[base,left]{\usebeamerfont{note date}\usebeamercolor[fg]{note date}\the\year-\ifnum\month<10\relax0\fi\the\month-\ifnum\day<10\relax0\fi\the\day}}
+        \end{pgflowlevelscope}
+      \end{pgfpicture}}
+    \nointerlineskip
+    \vbox to .45\paperheight{\vskip0.5em
+      \hbox{\insertshorttitle[width=8cm]}%
+      \setbox\beamer@tempbox=\hbox{\insertsection}%
+      \hbox{\ifdim\wd\beamer@tempbox>1pt{\hskip4pt\raise3pt\hbox{\vrule
+            width0.4pt height7pt\vrule width 9pt
+            height0.4pt}}\hskip1pt\hbox{\begin{minipage}[t]{7.5cm}\def\breakhere{}\insertsection\end{minipage}}\fi%
+      }%
+      \setbox\beamer@tempbox=\hbox{\insertsubsection}%
+      \hbox{\ifdim\wd\beamer@tempbox>1pt{\hskip17.4pt\raise3pt\hbox{\vrule
+            width0.4pt height7pt\vrule width 9pt
+            height0.4pt}}\hskip1pt\hbox{\begin{minipage}[t]{7.5cm}\def\breakhere{}\insertsubsection\end{minipage}}\fi%
+      }%
+      \setbox\beamer@tempbox=\hbox{\insertshortframetitle}%
+      \hbox{\ifdim\wd\beamer@tempbox>1pt{\hskip30.8pt\raise3pt\hbox{\vrule
+            width0.4pt height7pt\vrule width 9pt
+            height0.4pt}}\hskip1pt\hbox{\insertshortframetitle[width=7cm]}\fi%
+      }%
+      \vfil}%
+  }%
+  \ifbeamercolorempty[bg]{note page}{}{%
+    \nointerlineskip%
+    \insertvrule{.55\paperheight}{note page.bg}%
+    \vskip-.55\paperheight%
+  }%
+  \vskip.25em
+  \nointerlineskip
+  \insertnote
+}
+\setbeamertemplate{note page}[bignote]
+\usepackage{pgfpages}
+\setbeameroption{show notes on second screen}
+}
+\ProcessOptionsBeamer
+
+%Define Inner theme
+
+\mode<presentation>
+\setbeamertemplate{sections/subsections in toc}[square]
+\mode<all>
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{frametitle continuation}{}
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[triangle]
+\setbeamertemplate{itemize subsubitem}[square]
+\setbeamertemplate{enumerate items}[default]
+\setlength{\leftmargini}{.5em}
+\setlength{\leftmarginii}{1.0em}
+\setlength{\leftmarginiii}{1.5em}
+\setlength{\leftmarginiv}{2.0em}
+\setlength{\leftmarginv}{2.5em}
+\setlength{\leftmarginvi}{3.0em}
+
+
+% Define Color theme
+\mode<presentation>
+\setbeamertemplate{blocks}[rounded][shadow=true]
+%\setbeamercolor{block title}{use=structure,bg=HustYellow!20!white,fg=HustRed}
+\setbeamercolor{block title}{use=structure,bg=HustRed!30!white,fg=HustRed}
+\setbeamercolor{block title alerted}{use=alerted text,fg=alerted text.fg,bg=alerted text.fg!20!bg}
+\setbeamercolor{block title example}{use=example text,fg=example text.fg,bg=example text.fg!20!bg}
+%\setbeamercolor{block body}{parent=normal text,use=block title,bg=HustRed!30!white}
+\setbeamercolor{block body}{parent=normal text,use=block title,bg=HustRed!20!white}
+\setbeamercolor{block body alerted}{parent=normal text,use=block title alerted,bg=block title alerted.bg!50!bg}
+\setbeamercolor{block body example}{parent=normal text,use=block title example,bg=block title example.bg!50!bg}
+\mode
+<all>
+\setbeamercolor{title page}{fg=white}
+\setbeamercolor{logo}{bg=white}
+\setbeamercolor{frametitle}{fg=white,bg=HustRed}
+\setbeamercolor{section in sidebar}{fg=HustRed}
+\setbeamercolor{subsection in sidebar}{fg=HustRed}
+\setbeamercolor{itemize item}{fg=HustRed}
+\setbeamercolor{structure}{fg=HustRed}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{footline}{fg=HustRed}
+
+% Define Font theme
+\setbeamerfont{section in sidebar}{series=\bfseries}
+\setbeamerfont{subsection in sidebar}{series=\itshape}
+\setbeamerfont{title}{size=\Huge, series=\bfseries}
+\setbeamerfont{subtitle}{size=\huge, series=\bfseries}
+\setbeamerfont{author}{size=\normalsize, series=\bfseries}
+\setbeamerfont{institute}{size=\normalsize, series=\bfseries}
+\setbeamerfont{date}{size=\normalsize, series=\bfseries}
+\setbeamerfont{advisor}{size=\normalsize}
+\setbeamerfont{footline}{size=\tiny}
+\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\normalsize, series=\bfseries}
+\setbeamerfont{section in sidebar}{size*={8pt}{7pt}}
+\setbeamerfont{subsection in sidebar}{size*={6pt}{7pt}}
+\setbeamerfont{item}{series=\bfseries}
+\setbeamerfont{block title}{series=\bfseries}
+\setbeamerfont{block title alert}{series=\bfseries}
+\setbeamerfont{block title example}{series=\bfseries}
+

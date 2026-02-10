@@ -1,0 +1,37 @@
+\section{Giới thiệu về phân tích dữ liệu bóng đá}
+
+\textbf{Bóng đá} (hay còn gọi là túc cầu, đá bóng, đá banh) là một môn thể thao đồng đội được chơi với quả bóng hình cầu giữa hai đội gồm 11 cầu thủ mỗi bên. Môn thể thao này là môn thể thao phổ biến nhất trên thế giới với khoảng hơn 250 triệu người chơi ở hơn 200 quốc gia và vùng lãnh thổ. Môn này chơi trên một mặt sân hình chữ nhật với một khung thành ở mỗi đầu. Mục tiêu là ghi bàn vào khung thành đối phương. Đội nào có số bàn thắng nhiều hơn sẽ giành chiến thắng. \cite{wiki}.
+
+Trong bóng đá hiện đại, các kỹ thuật, công nghệ hỗ trợ cho việc phân tích, đánh giá ngày càng trở nên phổ biến hơn vì những lợi ích mà chúng mang lại. Rất nhiều đội bóng trên toàn thế giới, đặc biệt là các đội bóng giàu thành tích tại các giải đấu hàng đầu châu Âu, có thể sẵn sàng chi những số tiền rất lớn để đầu tư vào những công nghệ này nhằm cải thiện thành tích cho đội bóng, nâng cao hiệu quả trong công tác huấn luyện, thi đấu, đào tạo các cầu thủ trẻ tài năng hay thậm chí là để có thể mang về những bản hợp đồng chất lượng, đáng tiền trong mỗi kì chuyển nhượng căng thẳng. Nhờ vậy, dữ liệu được tổng hợp từ các trận đấu lại trở thành nguồn tài nguyên vô cùng quý giá đối với họ, điều này đã phần nào phản ánh tầm quan trọng của một kho dữ liệu lưu trữ nguồn tài nguyên này để phục vụ cho sự phân tích, đánh giá của các chuyên gia.
+
+Trong một trận đấu, điều mà những cổ động viên cuồng nhiệt lưu tâm đến không chỉ là những bàn thắng. Đó còn là phong cách chơi bóng độc đáo của các cầu thủ trên sân, những đường chuyền, đường kiến tạo đẹp mắt, những tình huống tranh chấp quyết liệt, những pha cản phá xuất thần của hậu vệ hoặc thủ môn hay những tình huống cố định, tình huống phản công,... Tất cả đều có thể được hiểu đơn giản là những sự kiện diễn ra trong một trận đấu. Nhưng ẩn sâu trong những dữ liệu sự kiện đó, các chuyên gia phân tích thường quan tâm đến các chỉ số sau:
+
+\begin{itemize}
+	\item $xG$ (Expected Goals): Xác suất một cú sút thành bàn, với giá trị dao động từ 0 đến 1, được tính dựa trên dữ liệu lịch sử của hàng nghìn cú sút có đặc điểm (vị trí tọa độ, góc sút, khoảng cách tới khung thành, bộ phận cơ thể, loại cơ hội,...) tương tự. Chỉ số này giúp đánh giá chất lượng cơ hội.
+	
+	\item $G-xG$ (Goals minus Expected Goals): Hiệu số giữa tổng số bàn thắng thực tế và tổng xG của cầu thủ hoặc đội bóng. Chỉ số này giúp đánh giá khả năng dứt điểm thành bàn của cầu thủ hoặc đội bóng.
+	
+	\item $xA$ (Expected Assists): Xác suất một đường chuyền trở thành kiến tạo, được tính bằng cách lấy $xG$ của cú sút ngay sau đường chuyền đó. Chỉ số này giúp đánh giá khả năng tạo cơ hội.
+	
+	\item $PPDA$ (Passes Per Defensive Action): Số đường chuyền trung bình của đội B trong khu vực $2/3$ sân cuối cùng (có tọa độ $x \ge 40$ trên sân có kích cỡ $120 \times 80$) trước khi đội A thực hiện một hành động phòng ngự. Đây là chỉ số đo lường mức độ bị ép sân của đội A.
+	\begin{equation} \label{eq:ppda}
+		\mathbf{PPDA}_A = \frac{\text{Số đường chuyền của B trong khu vực } x \ge 40}{\text{Số sự kiện phòng ngự của A trong khu vực } x \ge 40}
+	\end{equation}
+
+	\item $TiB/90$ (Touches in Box/90): Số lần chạm bóng trong vòng cấm của đối phương, được chuẩn hóa theo 90 phút thi đấu. Chỉ số này giúp đánh giá khả năng chọn vị trí và độ nguy hiểm khi tham gia tấn công của cầu thủ.
+	\begin{equation} \label{eq:tib90}
+		\mathbf{TiB/90} = \frac{\text{Tổng số lần chạm bóng trong vòng cấm}}{\text{Tổng số phút đã chơi}} \times 90
+	\end{equation}
+
+	\item $PAdjI/90$ (Possession-Adjusted Interceptions/90): Số lần cắt bóng đã điều chỉnh theo quyền kiểm soát bóng. Chỉ số này đo lường số lần một cầu thủ cắt đường chuyền của đối phương trong 90 phút, sau đó điều chỉnh bằng một hệ số dựa trên thời gian đội đó không kiểm soát bóng.
+	\begin{equation} \label{eq:padji}
+		\mathbf{PAdjI/90} = \frac{\text{Tổng số lần cắt bóng}}{\text{Tổng số phút đã chơi}} \times 90 \times \frac{\text{Tỷ lệ \% kiểm soát bóng đội bạn}}{\text{Tỷ lệ \% kiểm soát bóng đội nhà}}
+	\end{equation}
+
+	\item $TSR$ (Tackles Success Rate): Tỷ lệ tắc bóng thành công. Chỉ số này đánh giá khả năng tắc bóng chính xác, sự quyết đoán trong phòng ngự của cầu thủ.
+	\begin{equation} \label{eq:tsr}
+		\mathbf{TSR} = \frac{\text{Tổng số lần tắc bóng thành công}}{\text{Tổng số lần tắc bóng}} \times 100\%
+	\end{equation}
+\end{itemize}
+
+Sử dụng những chỉ số như vậy, các chuyên gia có thể thực hiện các công việc như: đánh giá phong độ của cầu thủ, tìm kiếm và phát hiện tài năng; điều chỉnh giáo án tập luyện, chiến thuật, vị trí thi đấu; đánh giá điểm mạnh và rủi ro trong hệ thống vận hành của đội bóng; tư vấn chuyển nhượng; dự đoán kết quả thi đấu và phong độ của cầu thủ, đội bóng trong tương lai.

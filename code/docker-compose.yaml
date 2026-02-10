@@ -1,0 +1,167 @@
+version: '3.8'
+
+# --- CẤU HÌNH CHUNG CHO CÁC SERVICE AIRFLOW ---
+x-airflow-common: &x-airflow-common
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
+  environment:
+    &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow/airflow
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__WEBSERVER__SECRET_KEY: "admin"
+    AIRFLOW_CONN_SPARK_DEFAULT: '{"conn_type": "spark", "host": "spark://spark-master", "port": 7077}'
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./scripts:/opt/airflow/scripts
+    - ./plugins:/opt/airflow/plugins
+    - ./jars:/opt/airflow/jars
+  depends_on:
+    - postgres_airflow
+
+services:
+  # -----------------------------
+  # 1. Data Warehouse (Postgres)
+  # -----------------------------
+  warehouse_db:
+    image: postgres:15
+    container_name: football_warehouse
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: football_dw
+    ports:
+      - "5432:5432"
+    volumes:
+      - warehouse_data:/var/lib/postgresql/data
+
+  # -----------------------------
+  # 2. Data Lake (MinIO)
+  # -----------------------------
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minio_admin
+      MINIO_ROOT_PASSWORD: minio_password
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  # -----------------------------
+  # 3. Spark Cluster (Master & Worker)
+  # -----------------------------
+  spark-master:
+    image: apache/spark:3.5.3
+    container_name: spark-master
+    user: root
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
+    ports:
+      - "8081:8080" # Spark Web UI
+      - "7077:7077" # Spark Master Port
+    volumes:
+      # [FIX 3] QUAN TRỌNG: Map đường dẫn giống hệt Airflow để Spark tìm thấy file code
+      - ./scripts:/opt/airflow/scripts 
+      - ./jars:/opt/airflow/jars
+      # Map các file jar cần thiết vào thư mục của Spark
+      - ./jars/aws-java-sdk-bundle-1.12.262.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar
+      - ./jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/hadoop-aws-3.3.4.jar
+      - ./jars/postgresql-42.6.0.jar:/opt/spark/jars/postgresql-42.6.0.jar
+
+  spark-worker:
+    image: apache/spark:3.5.3
+    container_name: spark-worker
+    user: root
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+    environment:
+      - SPARK_WORKER_MEMORY=1G # Giới hạn Ram để chạy nhẹ trên máy cá nhân
+      - SPARK_WORKER_CORES=1
+    depends_on:
+      - spark-master
+    volumes:
+      - ./scripts:/opt/airflow/scripts 
+      - ./jars:/opt/airflow/jars
+      # Map các file jar hệ thống
+      - ./jars/aws-java-sdk-bundle-1.12.262.jar:/opt/spark/jars/aws-java-sdk-bundle-1.12.262.jar
+      - ./jars/hadoop-aws-3.3.4.jar:/opt/spark/jars/hadoop-aws-3.3.4.jar
+      - ./jars/postgresql-42.6.0.jar:/opt/spark/jars/postgresql-42.6.0.jar
+
+  # -----------------------------
+  # 4. Airflow Components
+  # -----------------------------
+  postgres_airflow:
+    image: postgres:15
+    container_name: postgres_airflow
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+
+  airflow-init:
+    <<: *x-airflow-common
+    container_name: airflow_init
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate && \
+        airflow users create \
+          --username admin \
+          --password admin \
+          --firstname Admin \
+          --lastname User \
+          --role Admin \
+          --email admin@example.com
+    depends_on:
+      postgres_airflow:
+        condition: service_healthy
+
+  airflow-webserver:
+    <<: *x-airflow-common
+    container_name: airflow_webserver
+    command: webserver
+    ports:
+      - "8080:8080"
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-scheduler:
+    <<: *x-airflow-common
+    container_name: airflow_scheduler
+    command: scheduler
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # -----------------------------
+  # 5. Công cụ quản lý DB (pgAdmin)
+  # -----------------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "8888:80"
+    depends_on:
+      - warehouse_db
+
+volumes:
+  warehouse_data:
+  airflow_db_data:
+  minio_data:

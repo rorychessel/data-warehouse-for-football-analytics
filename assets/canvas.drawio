@@ -1,0 +1,64 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36" version="29.1.1">
+  <diagram name="Trang-1" id="ed-jWuLw4aC61Z64_Son">
+    <mxGraphModel dx="2216" dy="1189" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="5IW6nHADeAwXFmSyEFss-2" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFD43B;" value="Key Partners" vertex="1">
+          <mxGeometry height="410" width="230" x="50" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-22" parent="5IW6nHADeAwXFmSyEFss-2" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=20;" value="&lt;li&gt;&lt;p data-path-to-node=&quot;24,0,0&quot;&gt;&lt;b&gt;Nhà cung cấp dữ liệu:&lt;/b&gt; StatsBomb.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;24,1,0&quot;&gt;&lt;b&gt;Nhà tài trợ.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;24,2,0&quot;&gt;&lt;b&gt;Liên đoàn/Ban tổ chức giải.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;" vertex="1">
+          <mxGeometry height="170" width="200" x="29" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-4" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FF99CC;" value="Key Activities" vertex="1">
+          <mxGeometry height="180" width="220" x="290" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-21" parent="5IW6nHADeAwXFmSyEFss-4" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=15;" value="&lt;li&gt;&lt;p data-path-to-node=&quot;22,0,0&quot;&gt;&lt;b&gt;Thi đấu &amp;amp; Tập luyện.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;22,1,0&quot;&gt;&lt;b&gt;Tuyển trạch &amp;amp; Chuyển nhượng.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;22,1,0&quot;&gt;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Quản lý sức khỏe &amp;amp; Y tế.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;22,3,0&quot;&gt;&lt;b&gt;Marketing &amp;amp; Thương mại.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;" vertex="1">
+          <mxGeometry height="147.5" width="206.25" x="17.5" y="32.5" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-5" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#7EA6E0;" value="Key Resources" vertex="1">
+          <mxGeometry height="220" width="220" x="290" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-19" parent="5IW6nHADeAwXFmSyEFss-5" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=15;fontStyle=0" value="&lt;li&gt;&lt;p data-path-to-node=&quot;20,0,0&quot;&gt;&lt;b&gt;Cầu thủ.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;20,1,0&quot;&gt;&lt;b&gt;Hệ thống dữ liệu &amp;amp; Phân tích:&lt;/b&gt; Kho dữ liệu bóng đá, đội ngũ phân tích.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;20,2,0&quot;&gt;&lt;b&gt;Sân vận động &amp;amp; Cơ sở tập luyện.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;20,3,0&quot;&gt;&lt;b&gt;Thương hiệu &amp;amp; Hình ảnh.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;" vertex="1">
+          <mxGeometry height="180" width="195" x="17.5" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-6" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#97D077;" value="Value Proposition" vertex="1">
+          <mxGeometry height="410" width="480" x="520" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-15" parent="5IW6nHADeAwXFmSyEFss-6" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=20;" value="&lt;li&gt;&lt;p data-path-to-node=&quot;11,0,0&quot;&gt;&lt;b style=&quot;&quot;&gt;Thành tích thi đấu cao:&lt;/b&gt; Chiến thắng và danh hiệu là sản phẩm cốt lõi.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;11,1,0&quot;&gt;&lt;b&gt;Hoạt động chuyển nhượng thông minh:&lt;/b&gt; Mua cầu thủ tiềm năng giá rẻ, phát triển và bán giá cao.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;11,1,0&quot;&gt;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Thương hiệu mạnh &amp;amp; Giải trí:&lt;/b&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; Lối chơi đẹp mắt, cống hiến.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;11,3,0&quot;&gt;&lt;b style=&quot;&quot;&gt;Đào tạo trẻ chất lượng.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;" vertex="1">
+          <mxGeometry height="270" width="450" x="20" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-7" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=23;fillColor=#FF99CC;" value="Customer Segments" vertex="1">
+          <mxGeometry height="230" width="250" x="1012.75" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-12" parent="5IW6nHADeAwXFmSyEFss-7" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=15;" value="&lt;div style=&quot;line-height: 110%;&quot;&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;8,0,0&quot;&gt;&lt;b&gt;Người hâm mộ:&lt;/b&gt; Khán giả đến sân, xem qua truyền hình.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;8,1,0&quot;&gt;&lt;b&gt;Nhà tài trợ:&lt;/b&gt;&amp;nbsp;Quảng bá thương hiệu qua hình ảnh đội bóng.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;8,2,0&quot;&gt;&lt;b&gt;Các đài truyền hình/Đơn vị bản quyền:&lt;/b&gt;&amp;nbsp;Mua bản quyền phát sóng giải đấu.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;8,3,0&quot;&gt;&lt;b&gt;Các CLB khác:&lt;/b&gt;&amp;nbsp;Mua/bán cầu thủ.&lt;/p&gt;&lt;/li&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="210" width="225.5" x="19" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-8" parent="5IW6nHADeAwXFmSyEFss-7" style="swimlane;whiteSpace=wrap;html=1;fillColor=#7EA6E0;" value="Channels" vertex="1">
+          <mxGeometry height="170" width="250" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-16" parent="5IW6nHADeAwXFmSyEFss-8" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=15;" value="&lt;li&gt;&lt;p data-path-to-node=&quot;13,0,0&quot;&gt;&lt;b&gt;Sân vận động:&lt;/b&gt; Nơi diễn ra trận đấu.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;13,1,0&quot;&gt;&lt;b&gt;Truyền thông số:&lt;/b&gt; Website, App, Mạng xã hội của CLB.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;13,2,0&quot;&gt;&lt;b&gt;Cửa hàng:&lt;/b&gt; Bán vé và vật phẩm lưu niệm.&lt;/p&gt;&lt;/li&gt;" vertex="1">
+          <mxGeometry height="140" width="224.5" x="19" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-9" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#FFD43B;" value="Customer Relationship" vertex="1">
+          <mxGeometry height="410" width="220" x="1270.5" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-17" parent="5IW6nHADeAwXFmSyEFss-9" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=20;" value="&lt;li&gt;&lt;p data-path-to-node=&quot;15,0,0&quot;&gt;&lt;b&gt;Cộng đồng người hâm mộ:&lt;/b&gt; Tương tác qua mạng xã hội, hội cổ động viên.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;15,1,0&quot;&gt;&lt;b&gt;Thành viên thân thiết:&lt;/b&gt; Các gói ưu đãi cho cổ động viên trung thành.&lt;/p&gt;&lt;/li&gt;" vertex="1">
+          <mxGeometry height="230" width="190" x="19" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-10" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#97D077;" value="Cost Structure" vertex="1">
+          <mxGeometry height="220" width="710" x="50" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-23" parent="5IW6nHADeAwXFmSyEFss-10" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=20;fontStyle=0" value="&lt;li&gt;&lt;p data-path-to-node=&quot;26,0,0&quot;&gt;&lt;b&gt;Lương cầu thủ &amp;amp; Ban huấn luyện.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;26,0,0&quot;&gt;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Phí chuyển nhượng:&lt;/b&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt; Chi phí mua cầu thủ.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;26,2,0&quot;&gt;&lt;b&gt;Chi phí vận hành hệ thống:&lt;/b&gt; Hạ tầng server, nhân sự phân tích dữ liệu.&lt;/p&gt;&lt;/li&gt;&lt;li&gt;&lt;p data-path-to-node=&quot;26,3,0&quot;&gt;&lt;b&gt;Vận hành sân bãi &amp;amp; Học viện đào tạo.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;" vertex="1">
+          <mxGeometry height="180" width="670" x="29" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-11" parent="1" style="swimlane;whiteSpace=wrap;html=1;fillColor=#97D077;" value="Revenue Streams" vertex="1">
+          <mxGeometry height="220" width="711" x="782.25" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="5IW6nHADeAwXFmSyEFss-18" parent="5IW6nHADeAwXFmSyEFss-11" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;rounded=0;fontSize=20;" value="&lt;li style=&quot;font-family: &amp;quot;Google Sans Text&amp;quot;, sans-serif !important; line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&lt;p data-path-to-node=&quot;18,0,0&quot; style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&lt;b style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;Doanh thu chuyển nhượng:&amp;nbsp;&lt;/b&gt;CLB kiếm lời từ việc bán cầu thủ.&lt;/p&gt;&lt;/li&gt;&lt;li style=&quot;font-family: &amp;quot;Google Sans Text&amp;quot;, sans-serif !important; line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&lt;p data-path-to-node=&quot;18,1,0&quot; style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&lt;b style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;Tiền thưởng thành tích &amp;amp; Bản quyền truyền hình:&lt;/b&gt;&lt;span style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&amp;nbsp;CLB đạt&amp;nbsp;thứ hạng cao hơn &lt;span class=&quot;math-inline&quot; data-math=&quot;\rightarrow&quot; style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;dẫn đến&lt;/span&gt;&amp;nbsp;tiền thưởng nhiều hơn.&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;&lt;li style=&quot;font-family: &amp;quot;Google Sans Text&amp;quot;, sans-serif !important; line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&lt;p data-path-to-node=&quot;18,2,0&quot; style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&lt;b style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;Vé &amp;amp; Doanh thu ngày thi đấu.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;&lt;li style=&quot;font-family: &amp;quot;Google Sans Text&amp;quot;, sans-serif !important; line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&lt;p data-path-to-node=&quot;18,3,0&quot; style=&quot;line-height: 1.15 !important; margin-top: 0px !important;&quot;&gt;&lt;b style=&quot;margin-top: 0px !important; line-height: 100%;&quot;&gt;Tài trợ &amp;amp; Quảng cáo.&lt;/b&gt;&lt;/p&gt;&lt;/li&gt;" vertex="1">
+          <mxGeometry height="175" width="670" x="27.25" y="45" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

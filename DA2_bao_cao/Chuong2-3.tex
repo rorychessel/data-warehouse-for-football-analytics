@@ -1,0 +1,37 @@
+\section{Đường ống dữ liệu}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/data_pipeline.png}
+	\caption{Đường ống dữ liệu}
+	\label{data_pipeline}
+\end{figure}
+
+Hệ thống sử dụng đường ống dữ liệu tự động hóa được điều phối bởi \textbf{Apache Airflow}. Quy trình xử lý dữ liệu được chia thành các giai đoạn tuần tự như sau:
+
+\begin{enumerate}
+	\item \textbf{Giai đoạn 1: Trích xuất và tập kết (Extract \& Ingest)}
+	\begin{itemize}
+		\item Các tác vụ Python được kích hoạt để tải các tệp JSON từ StatsBomb.
+		\item Dữ liệu được giữ nguyên định dạng gốc và lưu trữ vào vùng Staging trên \textbf{MinIO} (Data Lake). Bước này đảm bảo tách biệt giữa quá trình thu thập và xử lý, giảm thiểu rủi ro ảnh hưởng đến nguồn dữ liệu.
+	\end{itemize}
+	
+	\item \textbf{Giai đoạn 2: Chuyển đổi và làm sạch (Transform)}
+	\begin{itemize}
+		\item \textbf{Apache Spark} đọc dữ liệu thô từ MinIO.
+		\item Thực hiện làm phẳng các cấu trúc JSON lồng nhau của dữ liệu sự kiện, chuẩn hóa tên cầu thủ và loại bỏ các bản ghi không hợp lệ.
+		\item Tính toán các chỉ số phát sinh như: Bàn thắng kỳ vọng (xG), tỷ lệ chuyền bóng thành công, số lần gây áp lực,...
+	\end{itemize}
+	
+	\item \textbf{Giai đoạn 3: Nạp dữ liệu (Load)}
+	\begin{itemize}
+		\item Dữ liệu sau khi xử lý sẽ được ghi vào cơ sở dữ liệu \textbf{PostgreSQL}.
+		\item Tuân theo mô hình \textit{Upsert} (Update/Insert) để đảm bảo không trùng lặp dữ liệu khi chạy lại pipeline.
+	\end{itemize}
+
+	\item \textbf{Giai đoạn 4: Khai thác và phân phối (Serving)}
+	\begin{itemize}
+		\item Tại tầng này, dữ liệu được truy vấn trực tiếp bởi \textbf{Microsoft PowerBI}.
+		\item Các kết nối dữ liệu được thiết lập để tự động làm mới các dashboard ngay khi dữ liệu mới được nạp vào kho thành công.
+	\end{itemize}
+\end{enumerate}

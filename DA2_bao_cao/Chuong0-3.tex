@@ -1,0 +1,89 @@
+\section{Quy trình tích hợp dữ liệu ETL và ELT}
+Quy trình tích hợp dữ liệu là xương sống vận hành của một kho dữ liệu. Nhiệm vụ của nó là di chuyển và chuẩn bị dữ liệu từ các hệ thống cơ sở dữ liệu tác nghiệp (OLTP) sang mô hình phân tích (OLAP) có trật tự và nhất quán. Có hai kiến trúc chính được sử dụng: ETL truyền thống và ELT hiện đại.
+
+\subsection{Kiến trúc ETL Kinh điển}
+
+ETL (Extract - Trích xuất, Transform - Biến đổi, Load - Tải) là quy trình cốt lõi chịu trách nhiệm di chuyển và chuẩn bị dữ liệu cho kho dữ liệu. Kiến trúc ETL điển hình sử dụng một vùng đệm (Staging Area), nơi các phép biến đổi phức tạp diễn ra. Việc này giúp giảm thiểu tác động lên hệ thống nguồn và đảm bảo kho dữ liệu đích chỉ nhận vào dữ liệu đã sạch.
+
+\subsubsection{Giai đoạn E - Trích xuất (Extract)}
+
+\textbf{Mục tiêu}: Đọc và lấy dữ liệu từ một hoặc nhiều hệ thống nguồn. Dữ liệu nguồn có thể từ cơ sở dữ liệu quan hệ, file phẳng (CSV, Excel) cho đến các API.
+
+\textbf{Các phương pháp:}
+\begin{itemize}
+	\item \textbf{Trích xuất Toàn bộ}: Sao chép toàn bộ bảng mỗi lần chạy, chỉ phù hợp với các bảng dữ liệu nhỏ, ít thay đổi.
+	
+	\item \textbf{Trích xuất tăng trưởng}: Chỉ trích xuất những dữ liệu đã thay đổi kể từ lần cuối cùng, tối ưu cho các bảng lớn.
+	
+	\item \textbf{Trích xuất từ các nguồn phức tạp}: Đối với các nguồn như API hoặc file, quy trình trích xuất phải xử lý các thách thức như giới hạn số lần gọi, phân trang và cấu trúc không nhất quán.
+\end{itemize}
+
+\subsubsection{Giai đoạn T - Biến đổi (Transform)}
+
+\textbf{Mục tiêu}: Chuyển đổi dữ liệu thô, không nhất quán và phân mảnh thành một bộ dữ liệu sạch, tuân thủ các quy tắc nghiệp vụ và có cấu trúc phù hợp với mô hình lược đồ sao đã thiết kế. Các tác vụ chính diễn ra tại vùng đệm bao gồm:
+\begin{itemize}
+	\item \textbf{Làm sạch và chuẩn hóa dữ liệu}:
+	\begin{itemize}
+		\item \textbf{Phân tách cấu trúc}: Tách các cấu trúc phức tạp (như dòng log web hoặc JSON) thành các cột riêng biệt có ý nghĩa.
+		
+		\item \textbf{Chuẩn hóa}: Đưa các giá trị khác nhau nhưng cùng ngữ nghĩa về một dạng chuẩn duy nhất (ví dụ: ánh xạ "HN" về "Hà Nội").
+		
+		\item \textbf{Xử lý giá trị NULL}: Thay thế bằng giá trị mặc định hoặc loại bỏ.
+		
+		\item \textbf{Xác thực}: Kiểm tra dữ liệu có vi phạm các quy tắc nghiệp vụ không.
+	\end{itemize}
+
+	\item \textbf{Tích hợp dữ liệu và Tạo khóa}:
+	\begin{itemize}
+		\item \textbf{Loại bỏ trùng lặp và hợp nhất}: Định nghĩa các quy tắc để xác định và hợp nhất các bản ghi trùng lặp từ nhiều nguồn.
+		
+		\item \textbf{Tạo khóa thay thế}: Quy trình ETL phải gán một khóa thay thế mới, đơn giản và có thứ tự cho mỗi giá trị của bảng Dimension, thay vì sử dụng khóa nghiệp vụ từ hệ thống nguồn.
+		
+		\item \textbf{Hiện thực hóa Logic SCD}: Áp dụng logic SCD loại 1, loại 2, hoặc loại 3 để theo dõi lịch sử thay đổi của các thuộc tính Dimension (ví dụ: địa chỉ khách hàng thay đổi theo thời gian).
+	\end{itemize}
+
+	\item \textbf{Biến đổi cho Bảng Fact}:
+	\begin{itemize}
+		\item \textbf{Tra cứu và thay thế khóa}: Thay thế tất cả các khóa nghiệp vụ từ nguồn bằng các khóa thay thế tương ứng từ các bảng Dimension.
+		
+		\item \textbf{Tính toán chỉ số đo lường}: Tính toán trước các chỉ số đo lường mới và lưu trữ chúng trong bảng Fact để tăng hiệu năng truy vấn.
+	\end{itemize}
+\end{itemize}
+
+\subsubsection{Giai đoạn L - Tải (Load)}
+
+\textbf{Mục tiêu}: Di chuyển dữ liệu đã được biến đổi từ vùng đệm vào các bảng Fact và Dimension trong kho dữ liệu đích một cách hiệu quả, an toàn.
+
+\textbf{Chiến lược tải và tối ưu hóa}:
+\begin{itemize}
+	\item \textbf{Tải ban đầu và tăng trưởng}:
+	\begin{itemize}
+		\item \textbf{Tải ban đầu}: Tải toàn bộ dữ liệu lịch sử lần đầu tiên.
+		
+		\item \textbf{Tải tăng trưởng}: Chỉ tải các dữ liệu mới hoặc đã thay đổi kể từ lần tải cuối cùng, phải hoàn thành trong cửa sổ tải cho phép.
+	\end{itemize}
+	\item \textbf{Tối ưu hóa tải bảng Fact lớn}: Đối với các bảng Fact khổng lồ (hàng tỷ dòng), kỹ thuật tối ưu hóa gồm: vô hiệu hóa hoặc xóa chỉ mục (indexes) trước khi bắt đầu tải, tải dữ liệu hàng loạt, sau đó xây dựng lại chỉ mục.
+\end{itemize}
+
+\subsection{Sự chuyển dịch sang kiến trúc ELT hiện đại}
+
+Sự ra đời của các kho dữ liệu đám mây như Google BigQuery hay Snowflake đã tạo ra sự chuyển dịch mạnh mẽ từ ETL sang ELT.
+
+\subsubsection{Kiến trúc ELT (Extract, Load, Transform)}
+
+\begin{enumerate}
+	\item \textbf{E (Extract)}: Tương tự như ETL, trích xuất dữ liệu từ nguồn.
+	
+	\item \textbf{L (Load)}: Thay vì biến đổi trước, dữ liệu thô, kể cả dữ liệu bán cấu trúc được tải thẳng vào kho dữ liệu đám mây đích.
+	
+	\item \textbf{T (Transform)}: Các phép biến đổi phức tạp được thực hiện ngay bên trong kho dữ liệu đám mây.
+\end{enumerate}
+
+\subsubsection{Ưu điểm của các nền tảng đám mây trong ELT}
+\begin{itemize}
+	\item \textbf{Sức mạnh tính toán}: Các nền tảng cho phép chạy các phép biến đổi phức tạp trên hàng tỷ dòng dữ liệu nhanh hơn so với một máy chủ ETL riêng biệt.
+	
+	\item \textbf{Chi phí linh hoạt}: Chi phí lưu trữ trên đám mây thấp và mô hình chi phí dựa trên nhu cầu khiến việc lưu trữ dữ liệu thô khả thi về mặt kinh tế.
+	
+	\item \textbf{Linh hoạt với dữ liệu thô}: ELT cho phép lưu trữ dữ liệu thô ở định dạng gốc, giúp các nhà khoa học dữ liệu dễ dàng khám phá và xây dựng mô hình.
+\end{itemize}

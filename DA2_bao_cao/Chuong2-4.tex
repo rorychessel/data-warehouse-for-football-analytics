@@ -1,0 +1,60 @@
+\section{Hệ thống chiều khái niệm}
+
+Dựa vào quá trình khảo sát và phân tích, ta có thể phân chia dữ liệu thành các nhóm chiều khái niệm chính:
+\begin{itemize}
+	\item \textbf{dim\_date}: cung cấp trục thời gian cho phân tích.
+	\item \textbf{dim\_match}: cung cấp thông tin ngữ cảnh cho các trận đấu.
+	\item \textbf{dim\_team}: cung cấp thông tin cơ bản của các đội bóng.
+	\item \textbf{dim\_player}: cung cấp thông tin cơ bản của các cầu thủ.
+	\item \textbf{dim\_event\_type, dim\_play\_pattern}: các loại hành động, tình huống bóng trong trận đấu (chuyền bóng, sút, tình huống cố định,...).
+	\item \textbf{dim\_location}: mô tả vị trí trên sân.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/dim_date.png}
+	\caption{Nhóm chiều thời gian}
+	\label{dim_date}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/dim_match.png}
+	\caption{Nhóm chiều thông tin trận đấu}
+	\label{dim_match}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/dim_team.png}
+	\caption{Nhóm chiều thông tin đội bóng}
+	\label{dim_team}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/dim_player.png}
+	\caption{Nhóm chiều thông tin cầu thủ}
+	\label{dim_player}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/dim_event_type.png}
+	\caption{Nhóm chiều thông tin sự kiện}
+	\label{dim_event_type}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.4\linewidth]{pics/dim_play_pattern.png}
+	\caption{Nhóm chiều tình huống bóng}
+	\label{dim_play_pattern}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1\linewidth]{pics/dim_location.png}
+	\caption{Nhóm chiều khu vực sân}
+	\label{dim_location}
+\end{figure}

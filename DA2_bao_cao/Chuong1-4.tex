@@ -1,0 +1,57 @@
+\section{Đặc tả yêu cầu kỹ thuật}
+
+\subsection{Yêu cầu về quy trình xử lý dữ liệu}
+Hệ thống phải đảm bảo khả năng vận hành tự động toàn bộ vòng đời dữ liệu, bao gồm các năng lực cụ thể:
+
+\begin{itemize}
+	\item \textbf{Khả năng tích hợp đa nguồn:}
+	\begin{itemize}
+		\item Hệ thống phải tự động kết nối và trích xuất dữ liệu định kỳ từ nguồn dữ liệu của StatsBomb.
+		\item Hỗ trợ cơ chế tải dữ liệu tăng trưởng để chỉ cập nhật các trận đấu mới diễn ra, tối ưu băng thông và thời gian xử lý.
+	\end{itemize}
+	
+	\item \textbf{Khả năng biến đổi và làm giàu dữ liệu:}
+	\begin{itemize}
+		\item Thực hiện quy trình ETL/ELT để làm sạch, chuẩn hóa tên cầu thủ/đội bóng và xử lý các giá trị thiếu hoặc sai lệch.
+		\item Tính toán tự động các chỉ số nâng cao không có sẵn trong dữ liệu gốc để phục vụ trực tiếp cho tầng phân tích.
+	\end{itemize}
+	
+	\item \textbf{Khả năng phục vụ phân tích:}
+	\begin{itemize}
+		\item Tổ chức dữ liệu theo mô hình đa chiều (Star Schema) tại tầng Data Warehouse để tối ưu hiệu năng cho các truy vấn phức tạp của công cụ BI.
+		\item Cung cấp các Data Mart chuyên biệt cho từng nghiệp vụ: Tuyển trạch, Phân tích trận đấu, và Quản trị chiến lược.
+	\end{itemize}
+\end{itemize}
+
+\subsection{Tiêu chuẩn chất lượng và hiệu năng}
+Hệ thống phải đáp ứng các tiêu chuẩn kỹ thuật sau để đảm bảo trải nghiệm người dùng và độ tin cậy:
+
+\begin{enumerate}
+	\item \textbf{Tính toàn vẹn và Chính xác:}
+	\begin{itemize}
+		\item Đảm bảo toàn vẹn dữ liệu trong quá trình nạp từ nguồn vào Data Lake.
+		\item Dữ liệu sau khi xử lý phải đảm bảo tính nhất quán giữa các bảng Fact và Dimension.
+	\end{itemize}
+	
+	\item \textbf{Khả năng mở rộng và Ổn định:}
+	\begin{itemize}
+		\item Hệ thống phải có khả năng xử lý khối lượng dữ liệu tăng dần theo từng mùa giải mà không làm giảm hiệu năng truy vấn.
+		\item Luồng dữ liệu phải có cơ chế tự động thử lại khi gặp lỗi kết nối và gửi cảnh báo đến kỹ sư vận hành.
+	\end{itemize}
+\end{enumerate}
+
+\subsection{Công nghệ sử dụng}
+
+\begin{itemize}
+	\item \textbf{Docker}: Được sử dụng để container hóa toàn bộ các thành phần của hệ thống, đảm bảo tính nhất quán giữa các môi trường.
+	
+	\item \textbf{Apache Airflow}: Được sử dụng làm công cụ điều phối, lập lịch và giám sát các luồng xử lý dữ liệu.
+	
+	\item \textbf{MinIO}: Được sử dụng làm Data Lake (lưu trữ đối tượng) để chứa dữ liệu thô và dữ liệu trung gian.
+	
+	\item \textbf{Apache Spark}: Được sử dụng làm công cụ xử lý dữ liệu phân tán, chịu trách nhiệm cho các tác vụ biến đổi dữ liệu phức tạp và quy mô lớn.
+	
+	\item \textbf{PostgreSQL}: Được sử dụng làm Data Warehouse, lưu trữ dữ liệu có cấu trúc đã được làm sạch và sẵn sàng cho việc truy vấn phân tích.
+	
+	\item \textbf{Microsoft PowerBI}: Được sử dụng làm công cụ BI để kết nối tới PostgreSQL, xây dựng các mô hình dữ liệu và tạo các báo cáo, dashboard.
+\end{itemize}

@@ -1,0 +1,79 @@
+\RequirePackage[2020-02-02]{latexrelease}
+\documentclass{beamer}[handout]
+\usepackage[style=numeric,backend=biber,giveninits=false]{biblatex}
+\addbibresource{reference.bib} % Thay tên nếu file bạn khác
+\usepackage[utf8]{vietnam}
+\usetheme[transition=boxin, duration=10, aspectratio=169]{HustTemplate} % ''bignote'' option
+% aspectratio: 16:10, 14:9, 5:4, 4:3, 3:2, and sqrt(2), default  16:9
+% transition: boxin, boxout, cover, dissolve, fade, push, wipe
+% duration: time duration for transition
+\usepackage{listings}
+\usepackage{graphicx,amsmath,amsthm}
+\usepackage{hyperref}
+%\usepackage{unicode-math}
+\usepackage{commath}
+\usepackage{comment}
+\usepackage{blindtext}
+\usepackage{esint}%% Tích phân đường kín 2 lớp
+%%
+\usepackage{enumitem}
+\usepackage{wrapfig}
+\usepackage{tasks, tabularx}
+\usepackage{multicol}
+\usepackage[printwatermark]{xwatermark}
+\usepackage{euscript}%[mathcal] Font chữ  Euler script symbols
+\usepackage{xcolor}
+\usepackage[arrowdel]{physics}
+%%%TIKZ%%%
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\usepgflibrary{patterns}
+\usetikzlibrary{calc,patterns,angles,quotes}
+%\usepgfplotslibrary{external}
+%\tikzexternalize
+\usepackage{mathrsfs}
+\usepackage{arcs}
+\usepackage{lmodern}
+\usetikzlibrary{arrows}
+
+%% PSTRICKs %%
+% \usepackage{graphicx}
+% \usepackage{filecontents}
+% %% file content %%
+% \input{Graph/Week1/2_Ex1}
+
+
+
+
+%%%%%% Multicol %%%%%%%%%%%
+\usepackage{multicol}
+\setlength{\columnsep}{1cm}
+\setlength{\columnseprule}{2pt}
+
+%% mới chỉnh
+\newcommand{\reddot}{\textcolor{HustBlue}{\textbullet}\hspace{10pt}}
+\newcommand{\redArr}{\textcolor{HustBlue}{\textbf{$\Longrightarrow$}}\hspace{5pt}}
+\newcommand{\redWord}[1]{\textcolor{HustBlue}{#1}}
+\newcommand{\B}{\operatorname{B}}
+\newcommand{\pt}[1]{\hfill\textbf{#1đ}}
+\newcommand{\dotbul}{\textbullet\hspace{0.2cm}}
+%%%%% new command %%%%%%%%%
+
+%\newcommand{\reddot}{\textcolor{HustRed}{\textbullet}\hspace{10pt}}
+%\newcommand{\redArr}{\textcolor{HustRed}{\textbf{$\Longrightarrow$}}\hspace{5pt}}
+%\newcommand{\redWord}[1]{\textcolor{HustRed}{#1}}
+%\newcommand{\redWord}[1]{\textcolor{HustRed}{#1}}
+%\newcommand{\B}{\operatorname{B}}
+%\newcommand{\pt}[1]{\hfill\textbf{#1đ}}
+%\newcommand{\dotbul}{\textbullet\hspace{0.2cm}}
+
+\title{ĐỒ ÁN II}
+\subtitle{XÂY DỰNG KHO DỮ LIỆU\\
+CHO PHÂN TÍCH BÓNG ĐÁ}
+\author{SINH VIÊN THỰC HIỆN: NGUYỄN PHÚ VINH - 20227169 \\
+GIẢNG VIÊN HƯỚNG DẪN: PGS. TS. NGUYỄN ĐÌNH HÂN}
+%\institute{}
+
+%\textbf{GVHD: PGS. TS. NGUYỄN ĐÌNH HÂN}
+%\thanksline{}

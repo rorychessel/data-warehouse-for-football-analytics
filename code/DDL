@@ -1,0 +1,257 @@
+/* ========================================================================
+PHẦN 1: TẠO CÁC BẢNG DIMENSION (BẢNG KÍCH THƯỚC)
+Các bảng này phải được tạo trước để làm tham chiếu cho bảng Fact.
+========================================================================
+*/
+
+-- 1. Bảng Dim Date (Thời gian)
+CREATE TABLE dim_date (
+    date_id        INTEGER PRIMARY KEY, -- Dạng Smart Key: 20231225
+    date_value     DATE NOT NULL,
+    year           INTEGER,
+    month          INTEGER,
+    day            INTEGER,
+    is_weekend     BOOLEAN
+);
+
+-- 2. Bảng Dim Team (Đội bóng)
+CREATE TABLE dim_team (
+    team_sk              INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    team_natural_id      VARCHAR(100),
+    kaggle_team_name     VARCHAR(255),
+    team_name            VARCHAR(255),
+    manager_name         VARCHAR(255),
+    home_stadium         VARCHAR(255),
+    effective_from       DATE,
+    effective_to         DATE,
+    is_current           BOOLEAN,
+    created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 3. Bảng Dim Player (Cầu thủ)
+CREATE TABLE dim_player (
+    player_sk            INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    player_statsbomb_id  VARCHAR(100),
+    player_name          VARCHAR(255),
+    kaggle_name          VARCHAR(255),
+    nationality          VARCHAR(100),
+    position_group       VARCHAR(100),
+    specific_position    VARCHAR(100),
+    birth_year           INTEGER,
+    effective_from       DATE,
+    effective_to         DATE,
+    is_current           BOOLEAN,
+    created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    team_name            VARCHAR(255)
+);
+
+-- 4. Bảng Dim Match (Trận đấu) - CÓ Foreign Key trỏ về Team
+CREATE TABLE dim_match (
+    match_sk             INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    match_statsbomb_id   VARCHAR(100),
+    season               VARCHAR(50),
+    competition          VARCHAR(100),
+    match_date           DATE,
+    kickoff_time         TIMESTAMP,
+    
+    -- Foreign Keys trỏ về dim_team
+    home_team_sk         INTEGER REFERENCES dim_team(team_sk),
+    away_team_sk         INTEGER REFERENCES dim_team(team_sk),
+    
+    home_score           INTEGER,
+    away_score           INTEGER,
+    stadium              VARCHAR(255),
+    referee              VARCHAR(255),
+    round                INTEGER,
+    season_stage         VARCHAR(100),
+    effective_from       DATE,
+    effective_to         DATE,
+    is_current           BOOLEAN,
+    created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 5. Các bảng Dim nhỏ (Lookup Tables)
+CREATE TABLE dim_event_type (
+    event_type_sk   INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    event_category  VARCHAR(100),
+    event_type      VARCHAR(100),
+    outcome         VARCHAR(100),
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE dim_play_pattern (
+    play_pattern_sk    INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    play_pattern_id    INTEGER,
+    play_pattern_name  VARCHAR(100),
+    created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE dim_location (
+    location_id   INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    field_zone    VARCHAR(100), -- Ví dụ: Zone 14, Right Flank
+    is_box        BOOLEAN,
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+/* ========================================================================
+PHẦN 2: TẠO CÁC BẢNG FACT (BẢNG SỰ KIỆN)
+Bao gồm đầy đủ Foreign Key và Partitioning
+========================================================================
+*/
+
+-- 1. FACT EVENT (Bảng lớn nhất - Có Partition)
+CREATE TABLE fact_event (
+    -- PK và Partition Key
+    event_pk             BIGINT GENERATED ALWAYS AS IDENTITY,
+    date_id              INTEGER NOT NULL, 
+    
+    statsbomb_event_id   VARCHAR(100),
+    match_sk             INTEGER NOT NULL,
+    team_sk              INTEGER NOT NULL,
+    player_sk            INTEGER, -- Có thể NULL nếu event không gắn với cầu thủ cụ thể
+    event_type_sk        INTEGER NOT NULL,
+    play_pattern_sk      INTEGER,
+    
+    -- Location tham chiếu về dim_location (Zone logic)
+    location_id          INTEGER, 
+    end_location_id      INTEGER,
+
+    -- Tọa độ thực tế (Optimized numeric)
+    location_x           NUMERIC(5,1), 
+    location_y           NUMERIC(5,1),
+    end_location_x       NUMERIC(5,1),
+    end_location_y       NUMERIC(5,1),
+
+    period               INTEGER,
+    minute               INTEGER,
+    second               INTEGER,
+    event_relative_time  NUMERIC(6,3),
+    duration             NUMERIC(6,3),
+    under_pressure       BOOLEAN,
+    pass_length          NUMERIC(6,2),
+    pass_angle           NUMERIC(6,3),
+    shot_xg              NUMERIC(6,4),
+    possession_id        VARCHAR(100),
+
+    created_at           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Định nghĩa Khóa Chính (Composite PK bắt buộc cho Partition)
+    CONSTRAINT pk_fact_event PRIMARY KEY (event_pk, date_id),
+
+    -- Định nghĩa TOÀN BỘ Khóa Ngoại (Foreign Keys)
+    CONSTRAINT fk_fe_date FOREIGN KEY (date_id) REFERENCES dim_date(date_id),
+    CONSTRAINT fk_fe_match FOREIGN KEY (match_sk) REFERENCES dim_match(match_sk),
+    CONSTRAINT fk_fe_team FOREIGN KEY (team_sk) REFERENCES dim_team(team_sk),
+    CONSTRAINT fk_fe_player FOREIGN KEY (player_sk) REFERENCES dim_player(player_sk),
+    CONSTRAINT fk_fe_type FOREIGN KEY (event_type_sk) REFERENCES dim_event_type(event_type_sk),
+    CONSTRAINT fk_fe_pattern FOREIGN KEY (play_pattern_sk) REFERENCES dim_play_pattern(play_pattern_sk),
+    CONSTRAINT fk_fe_loc FOREIGN KEY (location_id) REFERENCES dim_location(location_id),
+    CONSTRAINT fk_fe_end_loc FOREIGN KEY (end_location_id) REFERENCES dim_location(location_id)
+
+) PARTITION BY RANGE (date_id);
+
+-- Tạo Index cho Fact Event (Tự động áp dụng cho các partition con)
+CREATE INDEX idx_fact_event_match ON fact_event(match_sk);
+CREATE INDEX idx_fact_event_player ON fact_event(player_sk);
+CREATE INDEX idx_fact_event_team ON fact_event(team_sk);
+CREATE INDEX idx_fact_event_type ON fact_event(event_type_sk);
+
+
+-- 2. FACT PLAYER MATCH STATS
+CREATE TABLE fact_player_match_stats (
+    stats_sk            BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    
+    date_id             INTEGER NOT NULL REFERENCES dim_date(date_id),
+    player_sk           INTEGER NOT NULL REFERENCES dim_player(player_sk),
+    match_sk            INTEGER NOT NULL REFERENCES dim_match(match_sk),
+    team_sk             INTEGER NOT NULL REFERENCES dim_team(team_sk),
+
+    minutes_played      INTEGER CHECK (minutes_played >= 0),
+    total_passes        INTEGER DEFAULT 0,
+    accurate_passes     INTEGER DEFAULT 0,
+    total_shots         INTEGER DEFAULT 0,
+    goals               INTEGER DEFAULT 0,
+    assists             INTEGER DEFAULT 0,
+    xg_total            NUMERIC(6,3) DEFAULT 0,
+    xa_total            NUMERIC(6,3) DEFAULT 0,
+    tackles             INTEGER DEFAULT 0,
+    interceptions       INTEGER DEFAULT 0,
+    
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Đảm bảo mỗi cầu thủ chỉ có 1 dòng stats trong 1 trận
+    CONSTRAINT uq_fpm_player_match UNIQUE (player_sk, match_sk)
+);
+CREATE INDEX idx_fpm_match ON fact_player_match_stats(match_sk);
+CREATE INDEX idx_fpm_player ON fact_player_match_stats(player_sk);
+
+
+-- 3. FACT TEAM MATCH STATS
+CREATE TABLE fact_team_match_stats (
+    team_match_sk       BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    
+    date_id             INTEGER NOT NULL REFERENCES dim_date(date_id),
+    team_sk             INTEGER NOT NULL REFERENCES dim_team(team_sk),
+    opponent_team_sk    INTEGER NOT NULL REFERENCES dim_team(team_sk), -- Role Playing Dim
+    match_sk            INTEGER NOT NULL REFERENCES dim_match(match_sk),
+
+    possession_pct      NUMERIC(5,2) CHECK (possession_pct >= 0 AND possession_pct <= 100),
+    ppda                NUMERIC(6,2),
+    total_xg            NUMERIC(6,3),
+    goals_scored        INTEGER DEFAULT 0,
+    goals_conceded      INTEGER DEFAULT 0,
+    result              VARCHAR(10), -- 'W', 'D', 'L'
+    
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT uq_ftms_team_match UNIQUE (team_sk, match_sk)
+);
+CREATE INDEX idx_ftms_match ON fact_team_match_stats(match_sk);
+
+
+-- 4. FACT PLAYER SEASON STATS
+CREATE TABLE fact_player_season_stats (
+    season_stats_sk     BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    
+    player_sk           INTEGER NOT NULL REFERENCES dim_player(player_sk),
+    team_sk             INTEGER NOT NULL REFERENCES dim_team(team_sk),
+    season              VARCHAR(50) NOT NULL, -- VD: '2020/2021'
+
+    matches_played      INTEGER DEFAULT 0,
+    starts              INTEGER DEFAULT 0,
+    goals               INTEGER DEFAULT 0,
+    assists             INTEGER DEFAULT 0,
+    minutes             INTEGER DEFAULT 0,
+    yellow_cards        INTEGER DEFAULT 0,
+    red_cards           INTEGER DEFAULT 0,
+    xg_season           NUMERIC(7,3) DEFAULT 0,
+    xa_season           NUMERIC(7,3) DEFAULT 0,
+    
+    created_at          TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    -- Mỗi cầu thủ - tại 1 đội - trong 1 mùa giải là duy nhất
+    CONSTRAINT uq_fpss_unique UNIQUE (player_sk, season, team_sk)
+);
+CREATE INDEX idx_fpss_player_season ON fact_player_season_stats(player_sk, season);
+
+/* ========================================================================
+PHẦN 3: TẠO PARTITION CON CHO FACT_EVENT
+Bước này bắt buộc. Nếu không tạo, bạn sẽ không insert được vào fact_event
+========================================================================
+*/
+
+-- Logic: VALUES FROM (Start_Date_ID) TO (End_Date_ID)
+CREATE TABLE fact_event_2017 PARTITION OF fact_event
+    FOR VALUES FROM (20170000) TO (20180000);
+
+CREATE TABLE fact_event_2018 PARTITION OF fact_event
+    FOR VALUES FROM (20180000) TO (20190000);
+
+CREATE TABLE fact_event_2019 PARTITION OF fact_event
+    FOR VALUES FROM (20190000) TO (20200000);
+
+CREATE TABLE fact_event_2020 PARTITION OF fact_event
+    FOR VALUES FROM (20200000) TO (20210000);
+
+-- Partition mặc định cho các dữ liệu nằm ngoài khoảng trên (hoặc NULL)
+CREATE TABLE fact_event_default PARTITION OF fact_event DEFAULT;
